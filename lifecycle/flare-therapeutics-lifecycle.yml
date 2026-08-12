@@ -1,0 +1,118 @@
+generated: '2026-08-12'
+method: derived
+source: >-
+  openapi/flare-therapeutics-content-openapi.yml + live probes of https://www.flaretx.com on
+  2026-08-12
+note: >-
+  Flare Therapeutics runs no developer program, so it publishes no API versioning policy, no
+  deprecation policy, no SLA and no status page. Nothing below is asserted on the company's behalf.
+  No `StatusPage` and no `Deprecation` pointer is emitted in apis.yml, because neither exists — the
+  operational-transparency checks those pointers feed would be false credit here.
+versioning:
+  scheme: uri-path-namespace
+  current: wp/v2
+  docs: https://developer.wordpress.org/rest-api/
+  provider_policy: null
+  detail: >-
+    The version lives in the route namespace and is set by WordPress core and the installed plugins,
+    not by Flare Therapeutics. Namespaces observed on 2026-08-12 — oembed/1.0, wp/v2,
+    wp-site-health/v1, wp-block-editor/v1, wp-abilities/v1, wpe/cache-plugin/v1,
+    wpe_sign_on_plugin/v1, aiarc/v1, akismet/v1, gosmtp-smtp, mtphrSettings/v1, post-duplicator/v1,
+    yoast/v1, wpgmza/v1, google-site-kit/v1. A plugin update can add, change or remove routes at any
+    time with no notice to consumers.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  detail: >-
+    No RFC 8594 Sunset header and no Deprecation header observed on any response. No deprecation
+    policy is published. Route churn is inherited from upstream WordPress and plugin releases.
+deprecated_operations: []
+sla:
+  url: null
+  uptime_target: null
+status_page:
+  url: null
+  detail: >-
+    No status page. status.flaretx.com is NXDOMAIN and no third-party status page (Statuspage,
+    Instatus, Better Stack) is linked from the site.
+support:
+  url: https://www.flaretx.com/contact/
+  emails:
+  - contact@flaretx.com
+  - investorrelations@flaretx.com
+  - bd@flaretx.com
+  - media@flaretx.com
+  - clinops@flaretx.com
+  phone: 857-706-4400
+  detail: >-
+    The company publishes a corporate contact page with five role addresses and a phone number.
+    There is no developer support channel, no forum, no help center and no issue tracker, so no
+    `Support` pointer is emitted — the check it feeds is a developer-support signal and none of
+    these addresses is one.
+changelog:
+  url: null
+  detail: >-
+    No API changelog. The company's /news/ archive (42 posts, wired as BlogRSS in apis.yml) is a
+    corporate press-release feed, not a release-notes surface for this API, so no `ChangeLog`
+    pointer is emitted.
+observed_freshness:
+  api_index_fetched: '2026-08-12'
+  route_count: 259
+  namespace_count: 16
+  most_recent_post: '2026-06-30'
+  most_recent_page_modified: '2026-07-16'
+  most_recent_media: '2026-07-16'
+  oldest_post: '2021-05-13'
+  detail: >-
+    Content is actively maintained — the newest post is the $85M Series C and the appointment of
+    Anna Protopapas as CEO, dated 2026-06-30, six weeks before this pass; the pipeline page and the
+    newest media were touched on 2026-07-16.
+platform:
+  cms: WordPress
+  hosting: WP Engine
+  cdn: none observed
+  plugins_visible_in_route_index:
+  - Yoast SEO (yoast/v1, 42 routes)
+  - Google Site Kit (google-site-kit/v1, 49 routes)
+  - WP Google Maps (wpgmza/v1, 15 routes)
+  - Akismet (akismet/v1)
+  - WP Engine cache + SSO (wpe/cache-plugin/v1, wpe_sign_on_plugin/v1)
+  - Post Duplicator, Metaphor settings, GoSMTP, an image plugin at aiarc/v1
+  - Advanced Custom Fields (an `acf` field is present on every object, empty on this deployment)
+  detail: >-
+    Served by nginx with `x-powered-by: WP Engine`; no Cloudflare or other CDN layer was observed.
+    Responses carry `x-cacheable: SHORT` / `x-cache-group: normal` from the WP Engine object cache.
+source_code:
+  github_org: https://github.com/FlareTx
+  detail: >-
+    Flare Therapeutics operates a GitHub organization with seven public repositories, wired in
+    apis.yml as GitHubOrganization. Every one of them is a FORK of third-party open source, not
+    first-party software the company publishes — api, ui, worker, pipeline and iac are forks of the
+    hms-dbmi-cellenics / Biomage single-cell analysis platform, and claude-mem is a fork of
+    thedotmack/claude-mem. This is a research-computing deployment, not a developer product.
+  rejected_contract:
+    url: https://raw.githubusercontent.com/FlareTx/api/master/src/specs/api.v2.yaml
+    http_status: 200
+    parses_as: OpenAPI 3.0.0
+    decision: NOT SAVED
+    reason: >-
+      STEP 0c ownership check. The document is real and parses, but it says plainly that it belongs
+      to someone else — info.title "API", info.contact.name "Cellenics", license URL
+      https://github.com/hms-dbmi-cellenics/api/blob/master/LICENSE, and servers `- url: /v2` with no
+      host at all. It is the Cellenics/Biomage single-cell analysis API from Harvard Medical School's
+      Department of Biomedical Informatics, sitting in an unmodified-except-stale Flare fork (the
+      fork still carries the `seurat` routes upstream has since renamed to `obj2s`). No Flare host
+      serves it — api.flaretx.com is NXDOMAIN. Saving it would have credited Flare Therapeutics with
+      a 3,000-line public API it has never shipped and would have contaminated every derived
+      artifact in this repo.
+    checked: '2026-08-12'
+packages:
+  registries_searched: [npm, PyPI]
+  first_party_found: 0
+  detail: >-
+    An npm registry search for "flaretx" returned zero packages; pypi.org/pypi/flaretx/json returned
+    404. The only package manifest in the GitHub org, FlareTx/claude-mem/package.json, names
+    `claude-mem` 10.5.5 by Alex Newman with repository thedotmack/claude-mem — a fork, not a Flare
+    publication. No packages/ artifact and no `SDKs` pointer is emitted, because there is no
+    first-party client library to point at.

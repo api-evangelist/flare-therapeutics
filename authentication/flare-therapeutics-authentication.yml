@@ -1,0 +1,100 @@
+generated: '2026-08-12'
+method: derived
+source: >-
+  openapi/flare-therapeutics-content-openapi.yml + live anonymous probes of
+  https://www.flaretx.com/wp-json on 2026-08-12
+summary:
+  types: []
+  api_key_in: []
+  oauth2_flows: []
+  public_read: true
+note: >-
+  The Flare Therapeutics content API declares no security schemes and requires no credentials for
+  any operation catalogued in this repo. The WordPress REST index at /wp-json/ advertises exactly
+  one authentication provider — WordPress application passwords over HTTP Basic, with the
+  authorization screen at /wp-admin/authorize-application.php — which is the WordPress core
+  admin-user credential flow, not a developer-facing API key programme. There is no key issuance, no
+  registration, no scope model and no developer documentation, because Flare Therapeutics runs no
+  developer program. The read surface is simply open; everything else is closed to a WordPress user
+  account.
+schemes: []
+advertised_provider:
+  name: application-passwords
+  mechanism: HTTP Basic with a WordPress user + application password
+  authorization_endpoint: https://www.flaretx.com/wp-admin/authorize-application.php
+  source: the `authentication` object in the /wp-json/ route index
+  detail: >-
+    WordPress core default. Grants an existing WordPress user's own capabilities; it is not a
+    third-party developer credential and confers no access a member of the public can obtain. Not
+    modelled as a securityScheme in the OpenAPI because no operation in that document requires it.
+anonymous_access:
+  readable:
+  - GET /
+  - GET /wp/v2
+  - GET /wp/v2/posts
+  - GET /wp/v2/posts/{id}
+  - GET /wp/v2/pages
+  - GET /wp/v2/pages/{id}
+  - GET /wp/v2/media
+  - GET /wp/v2/media/{id}
+  - GET /wp/v2/categories
+  - GET /wp/v2/categories/{id}
+  - GET /wp/v2/tags
+  - GET /wp/v2/comments
+  - GET /wp/v2/blocks
+  - GET /wp/v2/wp_pattern_category
+  - GET /wp/v2/search
+  - GET /wp/v2/types
+  - GET /wp/v2/types/{type}
+  - GET /wp/v2/taxonomies
+  - GET /wp/v2/taxonomies/{taxonomy}
+  - GET /wp/v2/statuses
+  - GET /wp/v2/statuses/{status}
+  - GET /oembed/1.0/embed
+  gated:
+  - path: /wp/v2/users
+    status: 401
+    code: rest_cannot_access
+    message: Only authenticated users can access the User endpoint REST API.
+  - path: /wp/v2/settings
+    status: 401
+    code: rest_forbidden
+  - path: /wp/v2/menus
+    status: 401
+    code: rest_cannot_view
+  - path: /wp/v2/themes
+    status: 401
+    code: rest_cannot_view_themes
+  - path: /wp/v2/plugins
+    status: 401
+    code: rest_cannot_view_plugins
+  - path: /wp/v2/block-types
+    status: 401
+    code: rest_block_type_cannot_view
+  - path: /wp/v2/font-collections
+    status: 401
+    code: rest_cannot_read
+  - path: /wp/v2/icons
+    status: 401
+    code: rest_cannot_view
+  - path: /wp-abilities/v1/abilities
+    status: 401
+    code: rest_forbidden
+  - path: /wp-abilities/v1/categories
+    status: 401
+    code: rest_forbidden
+  - path: /oembed/1.0/proxy
+    status: 401
+    code: rest_forbidden
+    note: The oEmbed proxy is closed; only the provider endpoint /oembed/1.0/embed is open.
+  write_operations: >-
+    Every POST/PUT/PATCH/DELETE route in the 259-route index requires an authenticated WordPress
+    user — including the plugin namespaces aiarc/v1 (upload, crop), post-duplicator/v1,
+    mtphrSettings/v1 and gosmtp-smtp. None were exercised; the pipeline reads only.
+x-evidence:
+  probed: '2026-08-12'
+  index: https://www.flaretx.com/wp-json/
+  index_authentication_field:
+    application-passwords:
+      endpoints:
+        authorization: https://www.flaretx.com/wp-admin/authorize-application.php

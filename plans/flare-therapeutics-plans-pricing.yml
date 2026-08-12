@@ -1,0 +1,30 @@
+generated: '2026-08-12'
+method: searched
+source: https://www.flaretx.com/
+plan_count: 0
+note: >-
+  Flare Therapeutics publishes no API plans, no pricing page and no commercial API offer of any
+  kind. It is a clinical-stage biotechnology company with no developer program; its revenue model is
+  drug development and partnership (a discovery collaboration with Roche), not API access. The one
+  public API surface catalogued in this repo — the WordPress REST content API behind
+  www.flaretx.com — is free and anonymous, and is a side effect of the marketing site rather than a
+  product. No `Pricing` and no `Plans` pointer is emitted in apis.yml, because there is no page to
+  point at: emitting one would credit this provider with a commercial API offer it does not make.
+  An honest zero, recorded so a later round does not re-search the same ground.
+plans: []
+free_tier:
+  exists: true
+  detail: >-
+    Not a plan. Every catalogued operation is an anonymous read with no registration, no key, no
+    quota and no published limit. See rate-limits/flare-therapeutics-rate-limits.yml.
+evidence:
+- url: https://www.flaretx.com/
+  status: 200
+  note: >-
+    Site navigation is About, Science, Pipeline, Presentations & Publications, News, Join Us,
+    Contact. There is no Pricing, Plans, Developers or API entry anywhere in the navigation or footer.
+- url: https://www.flaretx.com/api
+  status: 404
+- url: https://www.flaretx.com/developers
+  status: 404
+checked: '2026-08-12'

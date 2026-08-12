@@ -1,0 +1,73 @@
+generated: '2026-08-12'
+method: probed
+source: live GET probes of the /.well-known/ discovery surface on www.flaretx.com
+host: https://www.flaretx.com
+note: >-
+  Flare Therapeutics publishes no /.well-known/ discovery documents. Every RFC 8615 path probed on
+  2026-08-12 returned 404. The site is WordPress on WP Engine (nginx, x-powered-by WP Engine);
+  /.well-known/ paths that fall through the WordPress rewrite return the theme's XHTML 404 body,
+  while /.well-known/security.txt and /llms.txt return the bare nginx 404 page — both are genuine
+  misses, not an SPA catch-all answering 200. Absence is recorded here as valid data. Because no
+  path returned a document, NO `WellKnown` and NO `SecurityTxt` pointer is emitted in apis.yml: the
+  pointer would assert that this provider serves a discovery surface, and it does not. No agent card
+  was found at either the A2A 1.0.0 canonical path or the pre-0.3 legacy path, so no a2a/ artifact
+  is written for this provider.
+documents:
+- path: /.well-known/security.txt          # RFC 9116
+  status: 404
+- path: /.well-known/openid-configuration  # OIDC discovery
+  status: 404
+- path: /.well-known/oauth-authorization-server  # RFC 8414
+  status: 404
+- path: /.well-known/api-catalog           # RFC 9727
+  status: 404
+- path: /.well-known/ai-plugin.json
+  status: 404
+- path: /.well-known/agent-card.json       # A2A 1.0.0 canonical
+  status: 404
+- path: /.well-known/agent.json            # A2A pre-0.3 legacy
+  status: 404
+- path: /llms.txt
+  status: 404
+related:
+- path: /robots.txt
+  status: 200
+  note: >-
+    Yoast-generated block. Sets Crawl-delay 10, `User-agent: * / Disallow:` (nothing disallowed) and
+    a sitemap reference to /sitemap_index.xml. No AI-agent or crawler-class directives of any kind.
+- path: /sitemap.xml
+  status: 200
+  note: Yoast XML sitemap index (redirects to /sitemap_index.xml).
+- path: /feed/
+  status: 200
+  note: WordPress RSS 2.0 feed for the 42-item news archive. Wired in apis.yml as type BlogRSS.
+- path: /wp-json/
+  status: 200
+  note: >-
+    The WordPress REST route index — the only machine-readable contract this provider exposes.
+    259 routes across 16 namespaces. Modelled in openapi/flare-therapeutics-content-openapi.yml.
+contract_discovery:
+  note: >-
+    STEP 0b contract discovery was run against the only host this provider operates
+    (www.flaretx.com); no API, docs or console host exists — api.flaretx.com, developer.flaretx.com,
+    docs.flaretx.com, trust.flaretx.com and status.flaretx.com are all NXDOMAIN.
+  probes:
+  - {path: /openapi.json, status: 404}
+  - {path: /openapi.yaml, status: 404}
+  - {path: /swagger.json, status: 404}
+  - {path: /v1/openapi.json, status: 404}
+  - {path: /api-docs, status: 404}
+  - {path: /docs, status: 404}
+  - {path: /redoc, status: 404}
+  - {path: /api, status: 404}
+  - {path: /developers, status: 404}
+  - {path: /graphql, status: 404}
+  - {path: /wp-json/graphql, status: 404}
+  - {path: /mcp, status: 404}
+  - path: /wp-json/wp-abilities/v1/abilities
+    status: 401
+    note: >-
+      The WordPress Abilities API is registered (6 routes) but every route returns 401 rest_forbidden
+      anonymously; a JSON-RPC tools/list POST to it returned 404 rest_no_route. It is a WordPress
+      core administrative surface bound to an authenticated user, not an agent endpoint Flare
+      Therapeutics publishes. No MCPServer pointer is emitted and no tool list is derived.

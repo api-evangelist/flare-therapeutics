@@ -1,0 +1,98 @@
+# Flare Therapeutics
+
+> Clinical-stage biotechnology company in Cambridge, Massachusetts developing small-molecule
+> precision medicines against transcription factors — a target class long considered undruggable —
+> using a "switch site" hypothesis with cell-based ligand discovery and chemoproteomics. Lead
+> programs are FX-909 (PPARG inverse agonist, advanced urothelial cancer) and FX-111
+> (androgen-receptor-directed, prostate cancer), plus a discovery collaboration with Roche.
+
+<!--
+generated: 2026-08-12
+method: generated
+source: API Evangelist enrichment pipeline, from apis.yml and the artifacts in this repo.
+NOTE: Flare Therapeutics does NOT publish an llms.txt. https://www.flaretx.com/llms.txt returns 404.
+This file is an API Evangelist generation and must not be represented as a provider publication.
+-->
+
+## What is and is not here
+
+Flare Therapeutics runs **no developer program**. There is no product API, no developer portal, no
+API documentation, no SDK, no CLI, no sandbox, no status page and no API pricing. The only
+machine-readable surface reachable without credentials is the WordPress REST content API behind
+www.flaretx.com, which serves the corporate news archive, pages, media library and search.
+
+If you are an agent looking for a Flare Therapeutics *product* API: there is not one. If you are
+looking for the company's news, publications or scientific posters as structured data: use the
+content API below.
+
+## APIs
+
+- [Flare Therapeutics Content API](https://www.flaretx.com/wp-json): Read-only WordPress REST
+  content API. 42 news posts (2021-05-13 to 2026-06-30), 14 corporate pages, 419 media attachments
+  (400 images, 19 PDFs and presentations), 4 categories, cross-content search, type/taxonomy/status
+  discovery and an oEmbed 1.0 provider endpoint. No authentication required for reads.
+
+## Specs
+
+- [OpenAPI 3.1 (API Evangelist derivation)](openapi/flare-therapeutics-content-openapi.yml): 24
+  operations, derived from the live route index and verified against anonymous responses on
+  2026-08-12. Flare Therapeutics publishes no OpenAPI of its own.
+- [Overlay](overlays/flare-therapeutics-content-overlay.yaml): what API Evangelist added on top of
+  the raw route index, kept separate from the provider's own contract.
+
+## How to call it
+
+- Base URL: `https://www.flaretx.com/wp-json`
+- Auth: none. Every catalogued operation is an anonymous GET.
+- Pagination: `page` + `per_page` (max 100); read `X-WP-Total` / `X-WP-TotalPages` and the RFC 8288
+  `Link` header. `per_page` above 100 is a 400, not a clamp.
+- Incremental sync: `modified_after` (ISO 8601) on posts, pages and media.
+- Payload control: `_fields` to trim (the default post carries ~20KB of Yoast markup), `_embed` to
+  inline featured media and terms.
+- Errors: WordPress envelope `{code, message, data:{status}}` — NOT RFC 9457 problem+json.
+- Courtesy: robots.txt advertises `Crawl-delay: 10`. No rate-limit headers are returned; honor the
+  crawl delay.
+
+Useful calls:
+
+- Latest news: `GET /wp/v2/posts?per_page=20&_fields=id,date,slug,title,link`
+- Press releases only: `GET /wp/v2/posts?categories=8` (Press Release), or `categories=3` (News)
+- Scientific posters and presentations:
+  `GET /wp/v2/media?media_type=application&per_page=100&_fields=id,date,slug,mime_type,source_url`
+- Search everything: `GET /wp/v2/search?search=FX-909`
+
+## Artifacts
+
+- [Authentication](authentication/flare-therapeutics-authentication.yml)
+- [Conventions](conventions/flare-therapeutics-conventions.yml)
+- [Error catalog](errors/flare-therapeutics-problem-types.yml)
+- [Data model](data-model/flare-therapeutics-data-model.yml)
+- [Lifecycle](lifecycle/flare-therapeutics-lifecycle.yml)
+- [Conformance](conformance/flare-therapeutics-conformance.yml)
+- [Well-known probe](well-known/flare-therapeutics-well-known.yml) — every path 404s; recorded absence
+- [Domain security](security/flare-therapeutics-domain-security.yml)
+- [Rate limits](rate-limits/flare-therapeutics-rate-limits.yml) — none published
+- [Plans](plans/flare-therapeutics-plans-pricing.yml) — none published
+- [Agent skills](skills/_index.yml)
+
+## Company
+
+- [Website](https://www.flaretx.com/)
+- [About](https://www.flaretx.com/about/)
+- [Science](https://www.flaretx.com/science/)
+- [Pipeline](https://www.flaretx.com/pipeline/) — [FX-909](https://www.flaretx.com/fx-909/), [FX-111](https://www.flaretx.com/pipeline/fx-111/)
+- [Presentations & publications](https://www.flaretx.com/publications/)
+- [News](https://www.flaretx.com/news/) — [RSS](https://www.flaretx.com/feed/)
+- [Careers](https://www.flaretx.com/join-us/)
+- [Contact](https://www.flaretx.com/contact/) — 400 Technology Square, Cambridge MA 02139, contact@flaretx.com
+- [Privacy policy](https://www.flaretx.com/privacy-policy/) · [Terms of use](https://www.flaretx.com/terms-of-use/)
+- [GitHub](https://github.com/FlareTx) — seven public repositories, all forks of third-party open
+  source (the Cellenics/Biomage single-cell analysis platform and claude-mem). No first-party
+  software and no Flare-owned API contract is published there.
+
+## Optional
+
+- The WordPress Abilities API is registered at `/wp-json/wp-abilities/v1/` but every route returns
+  401 anonymously and a JSON-RPC `tools/list` POST returns 404. It is a WordPress core
+  administrative surface, not an MCP server Flare Therapeutics publishes.
+- No A2A agent card at `/.well-known/agent-card.json` or `/.well-known/agent.json` (both 404).

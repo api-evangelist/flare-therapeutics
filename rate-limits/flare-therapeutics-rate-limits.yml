@@ -1,0 +1,48 @@
+generated: '2026-08-12'
+method: probed
+source: >-
+  live response headers observed on https://www.flaretx.com/wp-json across ~60 anonymous requests on
+  2026-08-12
+limit_count: 0
+note: >-
+  Flare Therapeutics publishes no rate limits and signals none at runtime. No RateLimit-*,
+  X-RateLimit-* or Retry-After header appeared on any /wp-json response, and no 429 or edge
+  challenge was returned across roughly sixty anonymous requests during this pass, including a walk
+  of collection endpoints and a set of deliberate 400/401/404 error probes. There is therefore no
+  runtime signal an agent can back off on — which is itself the finding, and the reason no
+  `RateLimits` pointer is emitted in apis.yml: the pointer would assert a published limit contract
+  that does not exist. An honest zero.
+limits: []
+response_headers:
+  rate_limit_headers: []
+  exhaustion_status: null
+  retry_after: false
+  detail: >-
+    Headers actually observed on a 200 from /wp/v2/posts — server, date, content-type, vary,
+    access-control-allow-headers, access-control-expose-headers, allow, link, x-content-type-options,
+    x-robots-tag, x-wp-total, x-wp-totalpages, x-cacheable, cache-control, accept-ranges, x-cache,
+    x-cache-group. None of them carries quota state.
+advisory_signals:
+- signal: robots.txt Crawl-delay
+  value: 10
+  url: https://www.flaretx.com/robots.txt
+  status: 200
+  detail: >-
+    The only throttling signal the provider publishes. It is advisory, crawler-scoped and not an API
+    rate limit, but with no runtime headers it is the only pacing guidance available — honour it.
+- signal: Cache-Control
+  value: 'max-age=600, must-revalidate'
+  detail: >-
+    Collection responses are cacheable for ten minutes behind the WP Engine object cache
+    (x-cacheable: SHORT). Respecting it is the practical substitute for a rate limit — a polite
+    consumer should not re-request a collection more than once per cache window.
+evidence:
+- url: https://www.flaretx.com/wp-json/wp/v2/posts?per_page=2
+  status: 200
+  note: No rate-limit headers present.
+- url: https://www.flaretx.com/wp-json/wp/v2/posts?per_page=500
+  status: 400
+  note: Bounds error, not a throttle — rest_invalid_param.
+- url: https://www.flaretx.com/robots.txt
+  status: 200
+checked: '2026-08-12'

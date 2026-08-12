@@ -1,0 +1,178 @@
+generated: '2026-08-12'
+method: derived
+source: >-
+  openapi/flare-therapeutics-content-openapi.yml + live anonymous responses observed on
+  2026-08-12
+note: >-
+  Entity-relationship graph derived from the schema $refs and the id-reference fields in the Flare
+  Therapeutics content OpenAPI. Identifiers are plain auto-increment integers — WordPress uses no
+  prefixed id scheme — and every relationship below was confirmed against a live response.
+identifiers:
+  scheme: integer
+  detail: >-
+    All objects share one wp_posts identifier space: posts, pages and media attachments cannot
+    collide. Taxonomy terms live in a separate term space, so a category id and a post id may share
+    a number.
+entities:
+- name: Post
+  collection: /wp/v2/posts
+  operations: [listPosts, getPost]
+  count_observed: 42
+  description: >-
+    A news item. On this deployment the collection is the company press archive, spanning
+    2021-05-13 (launch with an $82M Series A) to 2026-06-30 ($85M Series C and the appointment of
+    Anna Protopapas as CEO).
+  key_fields: [id, slug, title, content, excerpt, date, modified, status, link, categories, tags, author, featured_media, class_list]
+- name: Page
+  collection: /wp/v2/pages
+  operations: [listPages, getPage]
+  count_observed: 14
+  description: >-
+    A corporate page. Published slugs at harvest — home, about, science, pipeline, fx-909, fx-111,
+    publications, news, press-releases, join-us, contact, privacy-policy, terms-of-use, flaretx.
+  key_fields: [id, slug, title, content, parent, menu_order, date, modified, link, featured_media]
+- name: MediaItem
+  collection: /wp/v2/media
+  operations: [listMedia, getMediaItem]
+  count_observed: 419
+  description: >-
+    A media library attachment — 400 images and 19 application/* documents (posters, publications
+    and press assets). No video. This is where the AACR/ASCO poster PDFs behind the /publications/
+    page live, which makes it the highest-value collection on the surface for a research consumer.
+  key_fields: [id, slug, title, source_url, mime_type, media_type, media_details, filename, filesize, post, alt_text]
+- name: Term
+  collection: /wp/v2/categories and /wp/v2/tags
+  operations: [listCategories, getCategory, listTags, getTag]
+  count_observed: 4
+  description: >-
+    A taxonomy term. Four categories are registered — News (36 posts), Press Release (8), FlareTx
+    (3), Uncategorized (3). The post_tag taxonomy is registered but empty.
+  key_fields: [id, slug, name, taxonomy, parent, count, link]
+- name: Comment
+  collection: /wp/v2/comments
+  operations: [listComments, getComment]
+  count_observed: 0
+  description: Registered and reachable, but empty — no post on this deployment carries comments.
+  key_fields: [id, post, parent, author_name, date, content, status]
+- name: SearchResult
+  collection: /wp/v2/search
+  operations: [searchContent]
+  count_observed: 49
+  description: >-
+    A lightweight pointer returned by cross-content search (49 hits for "flare" at harvest time).
+    Not a stored entity — it must be resolved back to a Post, Page or MediaItem by its id and
+    subtype.
+  key_fields: [id, title, url, type, subtype]
+- name: PostType
+  collection: /wp/v2/types
+  operations: [listPostTypes, getPostType]
+  count_observed: 11
+  description: >-
+    A registered content type — post, page, attachment, nav_menu_item, wp_block, wp_template,
+    wp_template_part, wp_global_styles, wp_navigation, wp_font_family, wp_font_face. All WordPress
+    core. No company-specific custom post type is exposed over REST, so there is no structured
+    pipeline, program or publication entity to read — the FX-909 and FX-111 program detail lives in
+    page HTML only.
+  key_fields: [slug, name, rest_base, rest_namespace, taxonomies, hierarchical]
+- name: Taxonomy
+  collection: /wp/v2/taxonomies
+  operations: [listTaxonomies, getTaxonomy]
+  count_observed: 4
+  description: >-
+    A registered taxonomy — category, post_tag, nav_menu, wp_pattern_category. Note that post_tag
+    declares `types: [post, team_member]`, which reveals a `team_member` post type registered on the
+    site but NOT exposed over REST (it is absent from /wp/v2/types). The leadership roster is
+    therefore structured in the CMS but unreadable through the API.
+  key_fields: [slug, name, types, rest_base, hierarchical]
+- name: Status
+  collection: /wp/v2/statuses
+  operations: [listStatuses, getStatus]
+  count_observed: 1
+  description: A registered post status. Anonymously only the public `publish` status is returned.
+  key_fields: [slug, name, public, queryable]
+- name: User
+  collection: /wp/v2/users
+  operations: []
+  description: >-
+    The author entity. GATED — /wp/v2/users returns 401 rest_cannot_access anonymously, so no author
+    record can be resolved. The `author` integer on Post and Page (20 on the newest post) is a
+    dangling reference for anonymous consumers, and unlike some WordPress themes this deployment
+    adds no author_info object to the post representation, so there is no fallback at all.
+  key_fields: []
+relationships:
+- from: Post
+  to: Term
+  type: has_many
+  via: categories
+  detail: Array of category term ids; resolve with GET /wp/v2/categories/{id}.
+- from: Post
+  to: Term
+  type: has_many
+  via: tags
+  detail: Array of post_tag term ids. Always empty on this deployment.
+- from: Post
+  to: MediaItem
+  type: has_one
+  via: featured_media
+  detail: >-
+    Integer attachment id, 0 when unset. 0 on every post sampled at harvest, so post imagery must be
+    read out of the rendered content or matched in the media library by date.
+- from: Post
+  to: User
+  type: belongs_to
+  via: author
+  detail: Integer user id. NOT resolvable anonymously — /wp/v2/users is 401.
+- from: Page
+  to: Page
+  type: belongs_to
+  via: parent
+  detail: Self-referential hierarchy. 0 for every page on this deployment — the page tree is flat.
+- from: Page
+  to: MediaItem
+  type: has_one
+  via: featured_media
+- from: Page
+  to: User
+  type: belongs_to
+  via: author
+  detail: NOT resolvable anonymously.
+- from: MediaItem
+  to: Post
+  type: belongs_to
+  via: post
+  detail: The post or page the attachment was uploaded to; null for library-only uploads.
+- from: Comment
+  to: Post
+  type: belongs_to
+  via: post
+  detail: The collection is empty, so this edge is never populated on this deployment.
+- from: Term
+  to: Term
+  type: belongs_to
+  via: parent
+  detail: Hierarchical for the category taxonomy; 0 for every category on this deployment.
+- from: SearchResult
+  to: Post
+  type: has_one
+  via: id + subtype
+  detail: Resolve by mapping subtype to a rest_base via /wp/v2/types, then fetching /wp/v2/{rest_base}/{id}.
+- from: PostType
+  to: Taxonomy
+  type: has_many
+  via: taxonomies
+- from: Taxonomy
+  to: PostType
+  type: has_many
+  via: types
+traversal_shortcuts:
+  _embed: >-
+    Appending _embed to a collection or object request inlines featured media and terms under
+    _embedded, collapsing the has_one/has_many hops above into a single request. The author embed is
+    empty anonymously because /wp/v2/users is 401.
+  _fields: >-
+    Appending _fields=id,slug,title,link,date trims the payload substantially — the default post
+    representation carries the full rendered content plus roughly 20KB of yoast_head markup.
+  class_list: >-
+    The category is readable directly from class_list (for example `category-press-release`) without
+    a second request to /wp/v2/categories.
+subway: null

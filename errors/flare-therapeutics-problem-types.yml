@@ -1,0 +1,128 @@
+generated: '2026-08-12'
+method: derived
+source: >-
+  openapi/flare-therapeutics-content-openapi.yml + live anonymous error responses observed on
+  https://www.flaretx.com/wp-json on 2026-08-12
+format: wordpress-rest
+rfc9457: false
+note: >-
+  Flare Therapeutics publishes no error reference — it runs no developer program. This catalogue is
+  derived from the WordPress REST error envelope and from error bodies actually observed against
+  https://www.flaretx.com/wp-json on 2026-08-12. The envelope is
+  `{code, message, data:{status, params?, details?}}` served as application/json. It is NOT RFC 9457
+  problem details: there is no `type` URI, no `title`/`detail` split and no application/problem+json
+  media type, so no dereferenceable problem-type URIs exist for this provider and none are invented
+  here. The `code` field is the stable machine-readable discriminator.
+envelope:
+  media_type: application/json
+  fields:
+    code: Machine-readable error code — the stable discriminator.
+    message: Human-readable message, localized to the site language.
+    data.status: The HTTP status code, repeated in the body.
+    data.params: Per-parameter messages. Present only on rest_invalid_param.
+    data.details: Per-parameter structured detail with its own nested code. Present only on rest_invalid_param.
+problems:
+- status: 400
+  code: rest_invalid_param
+  title: Invalid parameter
+  detail: >-
+    One or more query parameters failed validation. The body carries data.params and data.details
+    keyed by parameter name.
+  observed: 'GET /wp/v2/posts?per_page=500 → {"code":"rest_invalid_param","message":"Invalid parameter(s): per_page","data":{"status":400,"params":{"per_page":"per_page must be between 1 (inclusive) and 100 (inclusive)"},"details":{"per_page":{"code":"rest_out_of_bounds",...}}}}'
+  remediation: Clamp per_page to 1..100 and re-send; read data.details[param].code for the specific rule.
+  source_operations:
+  - openapi/flare-therapeutics-content-openapi.yml#listPosts
+  - openapi/flare-therapeutics-content-openapi.yml#listPages
+  - openapi/flare-therapeutics-content-openapi.yml#listMedia
+  - openapi/flare-therapeutics-content-openapi.yml#listCategories
+  - openapi/flare-therapeutics-content-openapi.yml#searchContent
+- status: 400
+  code: rest_out_of_bounds
+  title: Parameter out of bounds
+  detail: Nested code inside data.details when a numeric parameter falls outside its allowed range.
+  remediation: Respect the minimum/maximum declared for the parameter in the OpenAPI.
+- status: 401
+  code: rest_cannot_access
+  title: Authenticated users only
+  detail: Returned anonymously for the user collection.
+  observed: 'GET /wp/v2/users → {"code":"rest_cannot_access","message":"Only authenticated users can access the User endpoint REST API.","data":{"status":401}}'
+  remediation: >-
+    Not remediable by a public consumer. There is no anonymous author collection on this deployment
+    and no theme-added author object on the post representation, so the `author` integer on Post and
+    Page cannot be resolved at all.
+- status: 401
+  code: rest_forbidden
+  title: Authentication required
+  detail: >-
+    The generic WordPress permission denial. Returned anonymously for /wp/v2/settings, the whole
+    wp-abilities/v1 namespace and the /oembed/1.0/proxy endpoint.
+  observed: 'GET /wp-json/wp/v2/settings → {"code":"rest_forbidden","message":"Sorry, you are not allowed to do that.","data":{"status":401}}'
+  remediation: >-
+    Not remediable by a public consumer. These routes are administrative and require an
+    authenticated WordPress user; they are excluded from the OpenAPI in this repo.
+- status: 401
+  code: rest_cannot_view
+  title: Cannot view resource
+  detail: Returned anonymously for /wp/v2/menus and /wp/v2/icons.
+- status: 401
+  code: rest_cannot_view_themes
+  title: Cannot view themes
+  detail: Returned anonymously for /wp/v2/themes.
+- status: 401
+  code: rest_cannot_view_plugins
+  title: Cannot manage plugins
+  detail: Returned anonymously for /wp/v2/plugins.
+- status: 401
+  code: rest_block_type_cannot_view
+  title: Cannot view block types
+  detail: Returned anonymously for /wp/v2/block-types.
+- status: 401
+  code: rest_cannot_read
+  title: Cannot read collection
+  detail: Returned anonymously for /wp/v2/font-collections.
+- status: 404
+  code: rest_post_invalid_id
+  title: Invalid post ID
+  detail: No published object exists with the requested numeric identifier. Shared by posts, pages and media.
+  observed: 'GET /wp/v2/posts/999999 → {"code":"rest_post_invalid_id","message":"Invalid post ID.","data":{"status":404}}'
+  remediation: Resolve the identifier through the collection or /wp/v2/search before fetching it directly.
+  source_operations:
+  - openapi/flare-therapeutics-content-openapi.yml#getPost
+  - openapi/flare-therapeutics-content-openapi.yml#getPage
+  - openapi/flare-therapeutics-content-openapi.yml#getMediaItem
+- status: 404
+  code: rest_comment_invalid_id
+  title: Invalid comment ID
+  detail: No comment exists with that id. Every id returns this — the comment collection is empty.
+  observed: 'GET /wp/v2/comments/1 → {"code":"rest_comment_invalid_id","message":"Invalid comment ID.","data":{"status":404}}'
+  source_operations:
+  - openapi/flare-therapeutics-content-openapi.yml#getComment
+- status: 404
+  code: rest_term_invalid
+  title: Term does not exist
+  detail: No taxonomy term exists with that id. Every id returns this on /wp/v2/tags — the taxonomy is empty.
+  observed: 'GET /wp/v2/tags/1 → {"code":"rest_term_invalid","message":"Term does not exist.","data":{"status":404}}'
+  source_operations:
+  - openapi/flare-therapeutics-content-openapi.yml#getTag
+  - openapi/flare-therapeutics-content-openapi.yml#getCategory
+- status: 404
+  code: rest_no_route
+  title: No route matched
+  detail: >-
+    The WordPress "no route was found matching the URL and request method" error. Note that on this
+    deployment a bad path OUTSIDE the /wp-json/ prefix (for example /.well-known/agent-card.json)
+    returns the theme's XHTML 404 page rather than this JSON error, and /.well-known/security.txt
+    and /llms.txt return the bare nginx 404 — only paths under /wp-json/ produce it.
+  observed: 'GET /wp/v2/nope → {"code":"rest_no_route","message":"No route was found matching the URL and request method.","data":{"status":404}}'
+edge_errors:
+  note: >-
+    One error class originates at the edge rather than the application and does not use the
+    WordPress envelope.
+  cases:
+  - status: 404
+    origin: nginx (WP Engine)
+    body: '<html><head><title>404 Not Found</title>...'
+    detail: >-
+      Returned for /.well-known/security.txt and /llms.txt, which bypass the WordPress rewrite. No
+      Cloudflare or other CDN interstitial was encountered during this pass; no request from this
+      probe was challenged or rate-limited.

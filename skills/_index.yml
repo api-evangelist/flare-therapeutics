@@ -1,0 +1,35 @@
+generated: '2026-08-12'
+method: generated
+source: openapi/flare-therapeutics-content-openapi.yml
+note: >-
+  Packaged Agent Skills for the only public API surface Flare Therapeutics exposes — the WordPress
+  REST content API behind www.flaretx.com. Every operationId referenced below exists verbatim in
+  openapi/flare-therapeutics-content-openapi.yml, which is itself derived from the provider's live
+  route index and verified against anonymous responses on 2026-08-12. Flare Therapeutics publishes
+  no AGENTS.md and no skill files of its own; these are API Evangelist generations. There is no
+  write flow to package — every write route on the surface requires an authenticated WordPress user.
+skills:
+- file: flare-therapeutics-track-news-archive.md
+  name: Track the Flare Therapeutics news archive
+  description: >-
+    Read the 42-item corporate news archive — press releases, news coverage and scientific
+    presentations, 2021-05-13 to 2026-06-30 — filtered by category and date window, with correct
+    pagination and incremental sync via modified_after.
+  api: openapi/flare-therapeutics-content-openapi.yml
+  operations: [listCategories, listPosts, getPost]
+- file: flare-therapeutics-harvest-scientific-posters.md
+  name: Harvest Flare Therapeutics scientific posters and presentations
+  description: >-
+    Enumerate the 419-item media library to pull the AACR, ASCO GU, SITC, ENA and ATS poster PDFs
+    and data presentations that back the Presentations & Publications page, filtering by media type,
+    MIME type and modification date.
+  api: openapi/flare-therapeutics-content-openapi.yml
+  operations: [listMedia, getMediaItem, listPages]
+- file: flare-therapeutics-search-and-resolve.md
+  name: Search Flare Therapeutics content and resolve the hits
+  description: >-
+    Use cross-content search to find material across posts, pages and media without knowing where it
+    lives, then map each hit's subtype to a rest_base via the discovery documents and resolve it to
+    the full object.
+  api: openapi/flare-therapeutics-content-openapi.yml
+  operations: [searchContent, getPost, getPage, getMediaItem, listPostTypes, listTaxonomies]

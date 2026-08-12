@@ -1,0 +1,24 @@
+generated: '2026-08-12'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+note: >-
+  Probed by 0-working/probe-domain-security.py on 2026-08-12. Only hosts Flare Therapeutics controls
+  are recorded. The probe also walked developer.wordpress.org / wordpress.org because the content
+  API entry uses the upstream WordPress REST handbook as its humanURL; those rows were removed
+  because they describe the WordPress Foundation's posture, not Flare's, and leaving them in would
+  credit or debit this provider for a domain it does not own. flaretx.com serves HSTS with a
+  two-year max-age but publishes no DNSSEC and no CAA records.
+hosts:
+- host: www.flaretx.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 26 19:28:00 2026 GMT
+  hsts: true
+  hsts_max_age: 63072000
+domains:
+- domain: flaretx.com
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: quarantine

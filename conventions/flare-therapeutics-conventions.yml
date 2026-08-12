@@ -1,0 +1,127 @@
+generated: '2026-08-12'
+method: derived
+source: >-
+  openapi/flare-therapeutics-content-openapi.yml + live response headers observed on
+  https://www.flaretx.com/wp-json on 2026-08-12
+note: >-
+  Cross-cutting request/response semantics of the Flare Therapeutics content API. Flare Therapeutics
+  publishes no API conventions documentation of its own; everything below is the WordPress REST
+  contract as it is actually deployed here, derived from the route index and confirmed against live
+  anonymous responses. Idempotency is deliberately NOT claimed — this deployment exposes no
+  idempotency key, no request-deduplication contract and no anonymous write surface at all, so no
+  `Idempotency` pointer is emitted in apis.yml.
+authentication:
+  style: none
+  detail: >-
+    No credentials required for any catalogued operation. The /wp-json/ index advertises WordPress
+    application passwords, which is the core admin credential flow, not a developer key programme.
+    See authentication/flare-therapeutics-authentication.yml.
+idempotency:
+  supported: false
+  header: null
+  detail: >-
+    No Idempotency-Key header, no client-supplied request identifier and no documented replay
+    semantics. Every catalogued operation is a GET and therefore idempotent by HTTP method alone,
+    which is not an idempotency contract.
+pagination:
+  style: page-number
+  params:
+    page: Current page of the collection (1-based).
+    per_page: Items per page. Minimum 1, maximum 100, default 10.
+    offset: Alternative absolute offset into the result set.
+  response_headers:
+    X-WP-Total: Total number of matching items.
+    X-WP-TotalPages: Total number of pages available.
+  link_header: >-
+    RFC 8288 Link header carrying rel="next" and rel="prev". Observed on
+    /wp/v2/posts?per_page=2 as <https://www.flaretx.com/wp-json/wp/v2/posts?per_page=2&page=2>; rel="next".
+  cors_exposure: >-
+    Access-Control-Expose-Headers advertises X-WP-Total, X-WP-TotalPages and Link, so browser
+    clients can read the pagination headers cross-origin.
+  bounds_error: >-
+    per_page above 100 returns 400 rest_invalid_param with a per-parameter details block, not a
+    clamp. Confirmed: /wp/v2/posts?per_page=500 → 400.
+field_selection:
+  supported: true
+  params:
+    _fields: Comma-separated allow-list of top-level response fields.
+    _embed: Inline embeddable resources (author, featured media, terms) under _embedded.
+    _envelope: Wrap the response body, status and headers in a single JSON envelope.
+  context:
+    param: context
+    values: [view, embed, edit]
+    detail: Anonymously only `view` and `embed` return data; `edit` requires an authenticated user.
+sorting_and_filtering:
+  order: asc | desc (default desc)
+  orderby: Per-collection enum — date, id, title, slug, modified, author, include, relevance, menu_order.
+  date_windows: after, before, modified_after, modified_before (ISO 8601).
+  identity: include / exclude / slug.
+  full_text: search, plus the dedicated /wp/v2/search cross-content endpoint.
+  taxonomy: categories, categories_exclude, tags, tags_exclude.
+metadata:
+  field: meta
+  detail: >-
+    A `meta` object is present on every post-like resource but only registered meta keys are
+    exposed. Keys observed anonymously on this deployment — _acf_changed,
+    pagelayer_contact_templates, _pagelayer_content, footnotes. No company-specific meta is surfaced.
+  extensions_observed:
+  - yoast_head and yoast_head_json — rendered and structured Yoast SEO metadata, including a
+    schema.org graph, inlined on every post, page and term.
+  - acf — an Advanced Custom Fields payload is present on every object but is an empty array on this
+    deployment, so there is no structured pipeline/program data behind it.
+  - class_list — the CSS class list WordPress would render for the object; the category is readable
+    from it (for example `category-press-release`) without a second request.
+  - No featured_image_src style theme shortcut is present here, and featured_media is 0 on the posts
+    sampled, so post imagery must be resolved from the rendered content or the media library.
+request_tracing:
+  request_id_header: null
+  detail: >-
+    No provider request identifier and no edge trace token — the deployment is served by nginx on WP
+    Engine with no CDN request-id header in front of it. There is nothing to correlate a client
+    request against a provider log.
+versioning:
+  scheme: uri-path-namespace
+  current: wp/v2
+  detail: >-
+    Version is carried in the route namespace (wp/v2, oembed/1.0, plus fourteen plugin namespaces).
+    Flare Therapeutics does not version this surface itself; it moves when WordPress core and the
+    installed plugins move. See lifecycle/flare-therapeutics-lifecycle.yml.
+error_envelope:
+  format: wordpress-rest
+  rfc9457: false
+  content_type: application/json
+  shape: '{ code: string, message: string, data: { status: int, params?: object, details?: object } }'
+  detail: >-
+    Not RFC 9457 problem details — there is no `type` URI and no application/problem+json media
+    type. See errors/flare-therapeutics-problem-types.yml.
+rate_limiting:
+  signaled: false
+  headers: []
+  detail: >-
+    No RateLimit-* or X-RateLimit-* headers are returned on any /wp-json response, and no 429 was
+    observed across roughly sixty probes during this pass. robots.txt advertises Crawl-delay: 10,
+    which is the only throttling signal the provider publishes and it is advisory and
+    crawler-scoped, not an API rate limit. See rate-limits/flare-therapeutics-rate-limits.yml.
+caching:
+  cache_control: 'max-age=600, must-revalidate on /wp-json collection responses'
+  headers_observed: [x-cacheable, x-cache, x-cache-group, vary, allow]
+  detail: >-
+    WP Engine object cache (x-cacheable: SHORT, x-cache: MISS/HIT, x-cache-group: normal) in front
+    of the origin. Vary includes Cookie, so an authenticated session bypasses the cache.
+indexing_posture:
+  x_robots_tag: noindex
+  detail: >-
+    Every /wp-json response carries `x-robots-tag: noindex` — WordPress core default. The content is
+    open to any client that requests it but the provider is asking search engines not to index the
+    JSON representation.
+cors:
+  allow_headers: [Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type]
+  expose_headers: [X-WP-Total, X-WP-TotalPages, Link]
+  detail: No Access-Control-Allow-Origin is emitted for an anonymous cross-origin GET.
+cross_links:
+  authentication: authentication/flare-therapeutics-authentication.yml
+  errors: errors/flare-therapeutics-problem-types.yml
+  lifecycle: lifecycle/flare-therapeutics-lifecycle.yml
+  data_model: data-model/flare-therapeutics-data-model.yml
+  conformance: conformance/flare-therapeutics-conformance.yml
+  rate_limits: rate-limits/flare-therapeutics-rate-limits.yml
