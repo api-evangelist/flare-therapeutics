@@ -28,6 +28,17 @@ created: '2026-08-12'
 modified: '2026-08-12'
 tags:
 - Company
+- Biotechnology
+- Pharmaceuticals
+- Oncology
+- Precision Medicine
+- transcription-factors
+- Drug Discovery
+- Clinical Trials
+- Life Sciences
+- content-api
+tags_raw:
+- Company
 - biotechnology
 - pharmaceuticals
 - oncology
@@ -50,6 +61,11 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://www.flaretx.com/wp-json
   tags:
+  - Content
+  - News
+  - Media
+  - Search
+  tags_raw:
   - content
   - news
   - media
