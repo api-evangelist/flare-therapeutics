@@ -49,32 +49,186 @@ tags_raw:
 - life-sciences
 - content-api
 apis:
-- aid: flare-therapeutics:flare-therapeutics-content-api
-  name: Flare Therapeutics Content API
+- aid: flare-therapeutics:flare-therapeutics-comments-api
+  name: Flare Therapeutics Comments API
   description: >-
-    The anonymously readable WordPress REST content API behind www.flaretx.com — the 42-item
-    corporate news archive, 14 corporate pages, a 419-item media library, the category taxonomy,
-    cross-content search, type/taxonomy/status discovery documents and an oEmbed 1.0 provider
-    endpoint. Flare Therapeutics publishes no OpenAPI for it; the specification in this repo is an
-    API Evangelist derivation of the live route index, restricted to operations verified to return
-    data anonymously on 2026-08-12.
+    Comment collection. Registered and reachable, but empty — no post on this deployment carries comments.
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://www.flaretx.com/wp-json
   tags:
-  - Content
-  - News
-  - Media
-  - Search
-  tags_raw:
-  - content
-  - news
+  - comments
+  properties:
+  - type: OpenAPI
+    url: openapi/flare-therapeutics-comments-api-openapi.yml
+  - type: Authentication
+    url: authentication/flare-therapeutics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flare-therapeutics-problem-types.yml
+  - type: Conventions
+    url: conventions/flare-therapeutics-conventions.yml
+  - type: DataModel
+    url: data-model/flare-therapeutics-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/flare-therapeutics-lifecycle.yml
+- aid: flare-therapeutics:flare-therapeutics-discovery-api
+  name: Flare Therapeutics Discovery API
+  description: Route, type, taxonomy and status discovery documents.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://www.flaretx.com/wp-json
+  tags:
+  - discovery
+  properties:
+  - type: OpenAPI
+    url: openapi/flare-therapeutics-discovery-api-openapi.yml
+  - type: Authentication
+    url: authentication/flare-therapeutics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flare-therapeutics-problem-types.yml
+  - type: Conventions
+    url: conventions/flare-therapeutics-conventions.yml
+  - type: DataModel
+    url: data-model/flare-therapeutics-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/flare-therapeutics-lifecycle.yml
+- aid: flare-therapeutics:flare-therapeutics-media-api
+  name: Flare Therapeutics Media API
+  description: >-
+    Media library (419 attachments at harvest time — 400 images, 19 application/* documents, 0 video).
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://www.flaretx.com/wp-json
+  tags:
   - media
+  properties:
+  - type: OpenAPI
+    url: openapi/flare-therapeutics-media-api-openapi.yml
+  - type: Authentication
+    url: authentication/flare-therapeutics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flare-therapeutics-problem-types.yml
+  - type: Conventions
+    url: conventions/flare-therapeutics-conventions.yml
+  - type: DataModel
+    url: data-model/flare-therapeutics-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/flare-therapeutics-lifecycle.yml
+- aid: flare-therapeutics:flare-therapeutics-oembed-api
+  name: Flare Therapeutics Oembed API
+  description: oEmbed 1.0 provider endpoint for www.flaretx.com URLs.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://www.flaretx.com/wp-json
+  tags:
+  - oembed
+  properties:
+  - type: OpenAPI
+    url: openapi/flare-therapeutics-oembed-api-openapi.yml
+  - type: Authentication
+    url: authentication/flare-therapeutics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flare-therapeutics-problem-types.yml
+  - type: Conventions
+    url: conventions/flare-therapeutics-conventions.yml
+  - type: DataModel
+    url: data-model/flare-therapeutics-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/flare-therapeutics-lifecycle.yml
+- aid: flare-therapeutics:flare-therapeutics-pages-api
+  name: Flare Therapeutics Pages API
+  description: >-
+    Corporate pages (14 published at harvest time) — home, about, science, pipeline, fx-909, fx-111, publications,
+    news, press-releases, join-us, contact, privacy-policy, terms-of-use, flaretx.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://www.flaretx.com/wp-json
+  tags:
+  - pages
+  properties:
+  - type: OpenAPI
+    url: openapi/flare-therapeutics-pages-api-openapi.yml
+  - type: Authentication
+    url: authentication/flare-therapeutics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flare-therapeutics-problem-types.yml
+  - type: Conventions
+    url: conventions/flare-therapeutics-conventions.yml
+  - type: DataModel
+    url: data-model/flare-therapeutics-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/flare-therapeutics-lifecycle.yml
+- aid: flare-therapeutics:flare-therapeutics-patterns-api
+  name: Flare Therapeutics Patterns API
+  description: >-
+    Reusable block patterns and their categories. Registered and anonymously reachable, but both report
+    zero published items.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://www.flaretx.com/wp-json
+  tags:
+  - patterns
+  properties:
+  - type: OpenAPI
+    url: openapi/flare-therapeutics-patterns-api-openapi.yml
+  - type: Authentication
+    url: authentication/flare-therapeutics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flare-therapeutics-problem-types.yml
+  - type: Conventions
+    url: conventions/flare-therapeutics-conventions.yml
+  - type: DataModel
+    url: data-model/flare-therapeutics-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/flare-therapeutics-lifecycle.yml
+- aid: flare-therapeutics:flare-therapeutics-posts-api
+  name: Flare Therapeutics Posts API
+  description: >-
+    News archive — press releases, news coverage and scientific presentations, 2021-05-13 (Series A launch)
+    to 2026-06-30 (Series C and CEO appointment). 42 published at harvest time.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://www.flaretx.com/wp-json
+  tags:
+  - posts
+  properties:
+  - type: OpenAPI
+    url: openapi/flare-therapeutics-posts-api-openapi.yml
+  - type: Authentication
+    url: authentication/flare-therapeutics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flare-therapeutics-problem-types.yml
+  - type: Conventions
+    url: conventions/flare-therapeutics-conventions.yml
+  - type: DataModel
+    url: data-model/flare-therapeutics-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/flare-therapeutics-lifecycle.yml
+- aid: flare-therapeutics:flare-therapeutics-search-api
+  name: Flare Therapeutics Search API
+  description: Cross-content search across published objects.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://www.flaretx.com/wp-json
+  tags:
   - search
   properties:
   - type: OpenAPI
-    url: openapi/flare-therapeutics-content-openapi.yml
-  - type: Overlay
-    url: overlays/flare-therapeutics-content-overlay.yaml
+    url: openapi/flare-therapeutics-search-api-openapi.yml
+  - type: Authentication
+    url: authentication/flare-therapeutics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flare-therapeutics-problem-types.yml
+  - type: Conventions
+    url: conventions/flare-therapeutics-conventions.yml
+  - type: DataModel
+    url: data-model/flare-therapeutics-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/flare-therapeutics-lifecycle.yml
+- aid: flare-therapeutics:flare-therapeutics-taxonomy-api
+  name: Flare Therapeutics Taxonomy API
+  description: >-
+    Categories and tags. Four categories are registered (News 36, Press Release 8, FlareTx 3, Uncategorized
+    3); the post_tag taxonomy is registered but empty.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://www.flaretx.com/wp-json
+  tags:
+  - taxonomy
+  properties:
+  - type: OpenAPI
+    url: openapi/flare-therapeutics-taxonomy-api-openapi.yml
   - type: Authentication
     url: authentication/flare-therapeutics-authentication.yml
   - type: ErrorCatalog
@@ -91,6 +245,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/flare-therapeutics-content-overlay.yaml
 - type: DomainSecurity
   url: security/flare-therapeutics-domain-security.yml
 - type: Website
