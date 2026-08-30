@@ -40,14 +40,14 @@ created: '2026-08-12'
 modified: '2026-08-12'
 tags:
 - Company
-- Biotechnology
-- Pharmaceuticals
-- Oncology
-- Precision Medicine
+- biotechnology
+- pharmaceuticals
+- oncology
+- precision-medicine
 - transcription-factors
-- Drug Discovery
-- Clinical Trials
-- Life Sciences
+- drug-discovery
+- clinical-trials
+- life-sciences
 - content-api
 tags_raw:
 - Company
@@ -68,6 +68,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://www.flaretx.com/wp-json
   tags:
+  - Comments
+  tags_raw:
   - comments
   properties:
   - type: OpenAPI
@@ -88,6 +90,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://www.flaretx.com/wp-json
   tags:
+  - Discovery
+  tags_raw:
   - discovery
   properties:
   - type: OpenAPI
@@ -109,6 +113,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://www.flaretx.com/wp-json
   tags:
+  - Media
+  tags_raw:
   - media
   properties:
   - type: OpenAPI
@@ -129,6 +135,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://www.flaretx.com/wp-json
   tags:
+  - oEmbed
+  tags_raw:
   - oembed
   properties:
   - type: OpenAPI
@@ -151,6 +159,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://www.flaretx.com/wp-json
   tags:
+  - Pages
+  tags_raw:
   - pages
   properties:
   - type: OpenAPI
@@ -173,6 +183,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://www.flaretx.com/wp-json
   tags:
+  - Patterns
+  tags_raw:
   - patterns
   properties:
   - type: OpenAPI
@@ -195,6 +207,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://www.flaretx.com/wp-json
   tags:
+  - Posts
+  tags_raw:
   - posts
   properties:
   - type: OpenAPI
@@ -215,6 +229,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://www.flaretx.com/wp-json
   tags:
+  - Search
+  tags_raw:
   - search
   properties:
   - type: OpenAPI
@@ -237,6 +253,8 @@ apis:
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://www.flaretx.com/wp-json
   tags:
+  - Taxonomy
+  tags_raw:
   - taxonomy
   properties:
   - type: OpenAPI
