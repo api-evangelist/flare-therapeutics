@@ -1,0 +1,118 @@
+openapi: 3.2.0
+info:
+  title: Flare Therapeutics Content Oembed API
+  version: wp/v2
+  summary: Anonymously readable WordPress REST content API behind www.flaretx.com.
+  description: The read-only content surface Flare Therapeutics exposes at https://www.flaretx.com/wp-json. Flare Therapeutics is a clinical-stage biotechnology company at 400 Technology Square, Cambridge, Massachusetts, developing small-molecule precision medicines against transcription factors — historically "undruggable" targets — using a switch-site discovery platform. Its lead programs are FX-909 in advanced urothelial cancer and FX-111 in prostate cancer, and it runs a discovery collaboration with Roche. It operates no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` route index the site publishes at /wp-json/, restricted to the operations verified to return data anonymously on 2026-08-12. Write operations, `/wp/v2/users`, `/wp/v2/settings`, `/wp/v2/menus`, `/wp/v2/themes`, `/wp/v2/plugins`, `/wp/v2/block-types`, `/wp/v2/font-collections`, `/wp/v2/icons`, the `wp-abilities/v1` namespace, the `aiarc/v1`, `wpe_sign_on_plugin/v1`, `google-site-kit/v1`, `yoast/v1`, `wpgmza/v1`, `akismet/v1`, `post-duplicator/v1`, `mtphrSettings/v1` and `gosmtp-smtp` plugin namespaces and the whole plugin-administration surface all require authentication or are administrative and are deliberately excluded — see x-api-evangelist-provenance.
+  contact:
+    name: Flare Therapeutics
+    url: https://www.flaretx.com/
+    email: contact@flaretx.com
+  x-api-evangelist-provenance: 'Derived by the API Evangelist enrichment pipeline from the live WordPress REST route index at https://www.flaretx.com/wp-json/ (259 routes across 16 namespaces) and verified against live anonymous responses on 2026-08-12. Every parameter below appears verbatim in the route index `args` for that endpoint, and every collection count in a description was read from the `X-WP-Total` response header on that date. Flare Therapeutics publishes no OpenAPI, no developer documentation and no API reference for this surface; the humanURL in apis.yml points at the upstream WordPress REST handbook that defines the wp/v2 contract. The deployment is served by WP Engine (nginx, x-powered-by WP Engine) and API responses carry `x-robots-tag: noindex`. Nothing here was obtained with credentials.'
+servers:
+- url: https://www.flaretx.com/wp-json
+  description: Production content API
+tags:
+- name: oembed
+  description: oEmbed 1.0 provider endpoint for www.flaretx.com URLs.
+paths:
+  /oembed/1.0/embed:
+    get:
+      tags:
+      - oembed
+      operationId: getOembed
+      summary: Get the oEmbed response for a www.flaretx.com URL
+      description: oEmbed 1.0 provider endpoint. Returns provider_name "Flare Therapeutics", the resolved title, author, thumbnail and an iframe embed for any URL on this site.
+      parameters:
+      - name: url
+        in: query
+        required: true
+        description: The URL of the resource for which to fetch oEmbed data.
+        schema:
+          type: string
+          format: uri
+      - name: format
+        in: query
+        schema:
+          type: string
+          default: json
+          enum:
+          - json
+          - xml
+      - name: maxwidth
+        in: query
+        schema:
+          type: integer
+          default: 600
+      responses:
+        '200':
+          description: The oEmbed rich response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Oembed'
+        '404':
+          description: The requested URL is not a resource on this site.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      description: The WordPress REST error envelope. NOT RFC 9457 problem details — no `type` URI and no application/problem+json media type. See errors/flare-therapeutics-problem-types.yml.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code — the stable discriminator.
+        message:
+          type: string
+          description: Human-readable message, localized to the site language.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+            params:
+              type: object
+            details:
+              type: object
+      required:
+      - code
+      - message
+      - data
+    Oembed:
+      type: object
+      properties:
+        version:
+          type: string
+          const: '1.0'
+        provider_name:
+          type: string
+        provider_url:
+          type: string
+          format: uri
+        author_name:
+          type: string
+        author_url:
+          type: string
+          format: uri
+        title:
+          type: string
+        type:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+          nullable: true
+        html:
+          type: string
+        thumbnail_url:
+          type: string
+          format: uri
+        thumbnail_width:
+          type: integer
+        thumbnail_height:
+          type: integer

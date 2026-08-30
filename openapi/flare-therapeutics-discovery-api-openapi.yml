@@ -1,0 +1,318 @@
+openapi: 3.2.0
+info:
+  title: Flare Therapeutics Content Discovery API
+  version: wp/v2
+  summary: Anonymously readable WordPress REST content API behind www.flaretx.com.
+  description: The read-only content surface Flare Therapeutics exposes at https://www.flaretx.com/wp-json. Flare Therapeutics is a clinical-stage biotechnology company at 400 Technology Square, Cambridge, Massachusetts, developing small-molecule precision medicines against transcription factors — historically "undruggable" targets — using a switch-site discovery platform. Its lead programs are FX-909 in advanced urothelial cancer and FX-111 in prostate cancer, and it runs a discovery collaboration with Roche. It operates no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` route index the site publishes at /wp-json/, restricted to the operations verified to return data anonymously on 2026-08-12. Write operations, `/wp/v2/users`, `/wp/v2/settings`, `/wp/v2/menus`, `/wp/v2/themes`, `/wp/v2/plugins`, `/wp/v2/block-types`, `/wp/v2/font-collections`, `/wp/v2/icons`, the `wp-abilities/v1` namespace, the `aiarc/v1`, `wpe_sign_on_plugin/v1`, `google-site-kit/v1`, `yoast/v1`, `wpgmza/v1`, `akismet/v1`, `post-duplicator/v1`, `mtphrSettings/v1` and `gosmtp-smtp` plugin namespaces and the whole plugin-administration surface all require authentication or are administrative and are deliberately excluded — see x-api-evangelist-provenance.
+  contact:
+    name: Flare Therapeutics
+    url: https://www.flaretx.com/
+    email: contact@flaretx.com
+  x-api-evangelist-provenance: 'Derived by the API Evangelist enrichment pipeline from the live WordPress REST route index at https://www.flaretx.com/wp-json/ (259 routes across 16 namespaces) and verified against live anonymous responses on 2026-08-12. Every parameter below appears verbatim in the route index `args` for that endpoint, and every collection count in a description was read from the `X-WP-Total` response header on that date. Flare Therapeutics publishes no OpenAPI, no developer documentation and no API reference for this surface; the humanURL in apis.yml points at the upstream WordPress REST handbook that defines the wp/v2 contract. The deployment is served by WP Engine (nginx, x-powered-by WP Engine) and API responses carry `x-robots-tag: noindex`. Nothing here was obtained with credentials.'
+servers:
+- url: https://www.flaretx.com/wp-json
+  description: Production content API
+tags:
+- name: discovery
+  description: Route, type, taxonomy and status discovery documents.
+paths:
+  /:
+    get:
+      tags:
+      - discovery
+      operationId: getApiIndex
+      summary: Get the REST API index
+      description: The root discovery document. Returns the site name, description, URL, the registered namespaces, the full route table with per-endpoint `args`, and the `authentication` block. This is the only machine-readable contract Flare Therapeutics publishes.
+      responses:
+        '200':
+          description: Route index.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  url:
+                    type: string
+                    format: uri
+                  home:
+                    type: string
+                    format: uri
+                  gmt_offset:
+                    type: number
+                  timezone_string:
+                    type: string
+                  namespaces:
+                    type: array
+                    items:
+                      type: string
+                  authentication:
+                    type: object
+                  routes:
+                    type: object
+                  _links:
+                    type: object
+  /wp/v2:
+    get:
+      tags:
+      - discovery
+      operationId: getNamespaceIndex
+      summary: Get the wp/v2 namespace index
+      description: The route table scoped to the wp/v2 namespace (106 routes at harvest time).
+      parameters:
+      - $ref: '#/components/parameters/Context'
+      responses:
+        '200':
+          description: Namespace index.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  namespace:
+                    type: string
+                  routes:
+                    type: object
+                  _links:
+                    type: object
+  /wp/v2/types:
+    get:
+      tags:
+      - discovery
+      operationId: listPostTypes
+      summary: List registered post types
+      description: Eleven post types are registered at harvest time — post, page, attachment, nav_menu_item, wp_block, wp_template, wp_template_part, wp_global_styles, wp_navigation, wp_font_family and wp_font_face. No company-specific custom post type is exposed over REST.
+      parameters:
+      - $ref: '#/components/parameters/Context'
+      responses:
+        '200':
+          description: Map of post type slug to type object.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/PostType'
+  /wp/v2/types/{type}:
+    get:
+      tags:
+      - discovery
+      operationId: getPostType
+      summary: Get one registered post type
+      parameters:
+      - name: type
+        in: path
+        required: true
+        description: An alphanumeric identifier for the post type.
+        schema:
+          type: string
+      - $ref: '#/components/parameters/Context'
+      responses:
+        '200':
+          description: The post type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostType'
+        '404':
+          $ref: '#/components/responses/NoRoute'
+  /wp/v2/taxonomies:
+    get:
+      tags:
+      - discovery
+      operationId: listTaxonomies
+      summary: List registered taxonomies
+      description: Four taxonomies registered at harvest time — category, post_tag (also attached to an unexposed `team_member` post type), nav_menu and wp_pattern_category.
+      parameters:
+      - $ref: '#/components/parameters/Context'
+      - name: type
+        in: query
+        description: Limit results to taxonomies associated with a specific post type.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Map of taxonomy slug to taxonomy object.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/Taxonomy'
+  /wp/v2/taxonomies/{taxonomy}:
+    get:
+      tags:
+      - discovery
+      operationId: getTaxonomy
+      summary: Get one registered taxonomy
+      parameters:
+      - name: taxonomy
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/Context'
+      responses:
+        '200':
+          description: The taxonomy.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Taxonomy'
+        '404':
+          $ref: '#/components/responses/NoRoute'
+  /wp/v2/statuses:
+    get:
+      tags:
+      - discovery
+      operationId: listStatuses
+      summary: List registered post statuses
+      description: Anonymously only the public `publish` status is returned.
+      parameters:
+      - $ref: '#/components/parameters/Context'
+      responses:
+        '200':
+          description: Map of status slug to status object.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/Status'
+  /wp/v2/statuses/{status}:
+    get:
+      tags:
+      - discovery
+      operationId: getStatus
+      summary: Get one registered post status
+      parameters:
+      - name: status
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/Context'
+      responses:
+        '200':
+          description: The status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '404':
+          $ref: '#/components/responses/NoRoute'
+components:
+  schemas:
+    Status:
+      type: object
+      properties:
+        slug:
+          type: string
+        name:
+          type: string
+        public:
+          type: boolean
+        queryable:
+          type: boolean
+        date_floating:
+          type: boolean
+        _links:
+          type: object
+    Taxonomy:
+      type: object
+      properties:
+        slug:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        hierarchical:
+          type: boolean
+        rest_base:
+          type: string
+        rest_namespace:
+          type: string
+        types:
+          type: array
+          items:
+            type: string
+        _links:
+          type: object
+    PostType:
+      type: object
+      properties:
+        slug:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        hierarchical:
+          type: boolean
+        has_archive:
+          type: boolean
+        rest_base:
+          type: string
+        rest_namespace:
+          type: string
+        icon:
+          type: string
+        taxonomies:
+          type: array
+          items:
+            type: string
+        _links:
+          type: object
+    Error:
+      type: object
+      description: The WordPress REST error envelope. NOT RFC 9457 problem details — no `type` URI and no application/problem+json media type. See errors/flare-therapeutics-problem-types.yml.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code — the stable discriminator.
+        message:
+          type: string
+          description: Human-readable message, localized to the site language.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+            params:
+              type: object
+            details:
+              type: object
+      required:
+      - code
+      - message
+      - data
+  parameters:
+    Context:
+      name: context
+      in: query
+      description: Scope under which the request is made; determines fields present in the response. Only `view` and `embed` are available anonymously — `edit` returns 401.
+      schema:
+        type: string
+        default: view
+        enum:
+        - view
+        - embed
+        - edit
+  responses:
+    NoRoute:
+      description: No route was found matching the URL and request method.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            noRoute:
+              value:
+                code: rest_no_route
+                message: No route was found matching the URL and request method.
+                data:
+                  status: 404

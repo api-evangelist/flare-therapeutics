@@ -1,0 +1,187 @@
+openapi: 3.2.0
+info:
+  title: Flare Therapeutics Content Search API
+  version: wp/v2
+  summary: Anonymously readable WordPress REST content API behind www.flaretx.com.
+  description: The read-only content surface Flare Therapeutics exposes at https://www.flaretx.com/wp-json. Flare Therapeutics is a clinical-stage biotechnology company at 400 Technology Square, Cambridge, Massachusetts, developing small-molecule precision medicines against transcription factors — historically "undruggable" targets — using a switch-site discovery platform. Its lead programs are FX-909 in advanced urothelial cancer and FX-111 in prostate cancer, and it runs a discovery collaboration with Roche. It operates no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` route index the site publishes at /wp-json/, restricted to the operations verified to return data anonymously on 2026-08-12. Write operations, `/wp/v2/users`, `/wp/v2/settings`, `/wp/v2/menus`, `/wp/v2/themes`, `/wp/v2/plugins`, `/wp/v2/block-types`, `/wp/v2/font-collections`, `/wp/v2/icons`, the `wp-abilities/v1` namespace, the `aiarc/v1`, `wpe_sign_on_plugin/v1`, `google-site-kit/v1`, `yoast/v1`, `wpgmza/v1`, `akismet/v1`, `post-duplicator/v1`, `mtphrSettings/v1` and `gosmtp-smtp` plugin namespaces and the whole plugin-administration surface all require authentication or are administrative and are deliberately excluded — see x-api-evangelist-provenance.
+  contact:
+    name: Flare Therapeutics
+    url: https://www.flaretx.com/
+    email: contact@flaretx.com
+  x-api-evangelist-provenance: 'Derived by the API Evangelist enrichment pipeline from the live WordPress REST route index at https://www.flaretx.com/wp-json/ (259 routes across 16 namespaces) and verified against live anonymous responses on 2026-08-12. Every parameter below appears verbatim in the route index `args` for that endpoint, and every collection count in a description was read from the `X-WP-Total` response header on that date. Flare Therapeutics publishes no OpenAPI, no developer documentation and no API reference for this surface; the humanURL in apis.yml points at the upstream WordPress REST handbook that defines the wp/v2 contract. The deployment is served by WP Engine (nginx, x-powered-by WP Engine) and API responses carry `x-robots-tag: noindex`. Nothing here was obtained with credentials.'
+servers:
+- url: https://www.flaretx.com/wp-json
+  description: Production content API
+tags:
+- name: search
+  description: Cross-content search across published objects.
+paths:
+  /wp/v2/search:
+    get:
+      tags:
+      - search
+      operationId: searchContent
+      summary: Search across all published content
+      description: Cross-content search returning lightweight pointers (id, title, url, type, subtype) that must be resolved back to the full object. A search for "flare" returned 49 hits at harvest time.
+      parameters:
+      - $ref: '#/components/parameters/Context'
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/PerPage'
+      - $ref: '#/components/parameters/Search'
+      - name: type
+        in: query
+        description: Limit results to items of an object type.
+        schema:
+          type: string
+          default: post
+          enum:
+          - post
+          - term
+          - post-format
+      - name: subtype
+        in: query
+        description: Limit results to items of one or more object subtypes.
+        schema:
+          type: array
+          items:
+            type: string
+          default:
+          - any
+      - name: exclude
+        in: query
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: include
+        in: query
+        schema:
+          type: array
+          items:
+            type: integer
+      - $ref: '#/components/parameters/Embed'
+      responses:
+        '200':
+          description: A page of search results.
+          headers:
+            X-WP-Total:
+              $ref: '#/components/headers/XWPTotal'
+            X-WP-TotalPages:
+              $ref: '#/components/headers/XWPTotalPages'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchResult'
+        '400':
+          $ref: '#/components/responses/InvalidParam'
+components:
+  headers:
+    XWPTotalPages:
+      description: Total number of pages available.
+      schema:
+        type: integer
+    XWPTotal:
+      description: Total number of matching items across all pages.
+      schema:
+        type: integer
+  parameters:
+    Embed:
+      name: _embed
+      in: query
+      description: Inline embeddable resources (author, featured media, terms) under `_embedded`.
+      schema:
+        type: string
+    PerPage:
+      name: per_page
+      in: query
+      description: Maximum number of items to be returned in the result set.
+      schema:
+        type: integer
+        default: 10
+        minimum: 1
+        maximum: 100
+    Context:
+      name: context
+      in: query
+      description: Scope under which the request is made; determines fields present in the response. Only `view` and `embed` are available anonymously — `edit` returns 401.
+      schema:
+        type: string
+        default: view
+        enum:
+        - view
+        - embed
+        - edit
+    Search:
+      name: search
+      in: query
+      description: Limit results to those matching a string.
+      schema:
+        type: string
+    Page:
+      name: page
+      in: query
+      description: Current page of the collection (1-based).
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+  schemas:
+    Error:
+      type: object
+      description: The WordPress REST error envelope. NOT RFC 9457 problem details — no `type` URI and no application/problem+json media type. See errors/flare-therapeutics-problem-types.yml.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code — the stable discriminator.
+        message:
+          type: string
+          description: Human-readable message, localized to the site language.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+            params:
+              type: object
+            details:
+              type: object
+      required:
+      - code
+      - message
+      - data
+    SearchResult:
+      type: object
+      description: A lightweight pointer returned by cross-content search. Not a stored entity — resolve it back to a Post, Page or MediaItem using id + subtype.
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        url:
+          type: string
+          format: uri
+        type:
+          type: string
+        subtype:
+          type: string
+        _links:
+          type: object
+  responses:
+    InvalidParam:
+      description: One or more query parameters failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            perPageOutOfBounds:
+              summary: per_page above the maximum of 100
+              value:
+                code: rest_invalid_param
+                message: 'Invalid parameter(s): per_page'
+                data:
+                  status: 400
+                  params:
+                    per_page: per_page must be between 1 (inclusive) and 100 (inclusive)
