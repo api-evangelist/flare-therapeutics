@@ -29,6 +29,20 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+accessModel:
+  pricing: unknown
+  onboarding: open
+  trial: false
+  try_now: false
+  public: true
+  label: Open access
+  confidence: medium
+  source:
+  - authentication
+  - rate-limits
+  - security
+  generated: '2026-09-02'
+  method: derived
 image: https://www.flaretx.com/wp-content/uploads/2021/05/Flare-website-social-card-051221.jpg
 url: https://raw.githubusercontent.com/api-evangelist/flare-therapeutics/refs/heads/main/apis.yml
 x-type: company
