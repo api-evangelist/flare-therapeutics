@@ -143,28 +143,6 @@ apis:
     url: data-model/flare-therapeutics-data-model.yml
   - type: Lifecycle
     url: lifecycle/flare-therapeutics-lifecycle.yml
-- aid: flare-therapeutics:flare-therapeutics-oembed-api
-  name: Flare Therapeutics Oembed API
-  description: oEmbed 1.0 provider endpoint for www.flaretx.com URLs.
-  humanURL: https://developer.wordpress.org/rest-api/
-  baseURL: https://www.flaretx.com/wp-json
-  tags:
-  - oEmbed
-  tags_raw:
-  - oembed
-  properties:
-  - type: OpenAPI
-    url: openapi/flare-therapeutics-oembed-api-openapi.yml
-  - type: Authentication
-    url: authentication/flare-therapeutics-authentication.yml
-  - type: ErrorCatalog
-    url: errors/flare-therapeutics-problem-types.yml
-  - type: Conventions
-    url: conventions/flare-therapeutics-conventions.yml
-  - type: DataModel
-    url: data-model/flare-therapeutics-data-model.yml
-  - type: Lifecycle
-    url: lifecycle/flare-therapeutics-lifecycle.yml
 - aid: flare-therapeutics:flare-therapeutics-pages-api
   name: Flare Therapeutics Pages API
   description: >-
@@ -273,6 +251,26 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/flare-therapeutics-taxonomy-api-openapi.yml
+  - type: Authentication
+    url: authentication/flare-therapeutics-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flare-therapeutics-problem-types.yml
+  - type: Conventions
+    url: conventions/flare-therapeutics-conventions.yml
+  - type: DataModel
+    url: data-model/flare-therapeutics-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/flare-therapeutics-lifecycle.yml
+- aid: flare-therapeutics:flare-therapeutics-o-embed-api
+  name: Flare Therapeutics o Embed API
+  description: oEmbed 1.0 provider endpoint for www.flaretx.com URLs.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://www.flaretx.com/wp-json
+  tags:
+  - o Embed
+  properties:
+  - type: OpenAPI
+    url: openapi/flare-therapeutics-o-embed-api-openapi.yml
   - type: Authentication
     url: authentication/flare-therapeutics-authentication.yml
   - type: ErrorCatalog
