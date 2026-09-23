@@ -3,7 +3,7 @@ info:
   title: Flare Therapeutics Content Pages API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind www.flaretx.com.
-  description: The read-only content surface Flare Therapeutics exposes at https://www.flaretx.com/wp-json. Flare Therapeutics is a clinical-stage biotechnology company at 400 Technology Square, Cambridge, Massachusetts, developing small-molecule precision medicines against transcription factors — historically "undruggable" targets — using a switch-site discovery platform. Its lead programs are FX-909 in advanced urothelial cancer and FX-111 in prostate cancer, and it runs a discovery collaboration with Roche. It operates no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` route index the site publishes at /wp-json/, restricted to the operations verified to return data anonymously on 2026-08-12. Write operations, `/wp/v2/users`, `/wp/v2/settings`, `/wp/v2/menus`, `/wp/v2/themes`, `/wp/v2/plugins`, `/wp/v2/block-types`, `/wp/v2/font-collections`, `/wp/v2/icons`, the `wp-abilities/v1` namespace, the `aiarc/v1`, `wpe_sign_on_plugin/v1`, `google-site-kit/v1`, `yoast/v1`, `wpgmza/v1`, `akismet/v1`, `post-duplicator/v1`, `mtphrSettings/v1` and `gosmtp-smtp` plugin namespaces and the whole plugin-administration surface all require authentication or are administrative and are deliberately excluded — see x-api-evangelist-provenance.
+  description: The read-only content surface Flare Therapeutics exposes at https://www.flaretx.com/wp-json.
   contact:
     name: Flare Therapeutics
     url: https://www.flaretx.com/
@@ -13,13 +13,13 @@ servers:
 - url: https://www.flaretx.com/wp-json
   description: Production content API
 tags:
-- name: pages
+- name: Pages
   description: Corporate pages (14 published at harvest time) — home, about, science, pipeline, fx-909, fx-111, publications, news, press-releases, join-us, contact, privacy-policy, terms-of-use, flaretx.
 paths:
   /wp/v2/pages:
     get:
       tags:
-      - pages
+      - Pages
       operationId: listPages
       summary: List corporate pages
       description: 14 published pages at harvest time.
@@ -93,7 +93,7 @@ paths:
   /wp/v2/pages/{id}:
     get:
       tags:
-      - pages
+      - Pages
       operationId: getPage
       summary: Get one corporate page
       parameters:
@@ -112,6 +112,95 @@ paths:
           $ref: '#/components/responses/InvalidPostId'
 components:
   parameters:
+    Embed:
+      name: _embed
+      in: query
+      description: Inline embeddable resources (author, featured media, terms) under `_embedded`.
+      schema:
+        type: string
+    Page:
+      name: page
+      in: query
+      description: Current page of the collection (1-based).
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+    Fields:
+      name: _fields
+      in: query
+      description: Comma-separated allow-list of top-level response fields to return.
+      schema:
+        type: string
+    Before:
+      name: before
+      in: query
+      description: Limit response to posts published before a given ISO 8601 compliant date.
+      schema:
+        type: string
+        format: date-time
+    Offset:
+      name: offset
+      in: query
+      description: Offset the result set by a specific number of items.
+      schema:
+        type: integer
+    ModifiedBefore:
+      name: modified_before
+      in: query
+      description: Limit response to posts modified before a given ISO 8601 compliant date.
+      schema:
+        type: string
+        format: date-time
+    Order:
+      name: order
+      in: query
+      description: Order sort attribute ascending or descending.
+      schema:
+        type: string
+        default: desc
+        enum:
+        - asc
+        - desc
+    Search:
+      name: search
+      in: query
+      description: Limit results to those matching a string.
+      schema:
+        type: string
+    Include:
+      name: include
+      in: query
+      description: Limit result set to specific ids.
+      schema:
+        type: array
+        items:
+          type: integer
+    Context:
+      name: context
+      in: query
+      description: Scope under which the request is made; determines fields present in the response. Only `view` and `embed` are available anonymously — `edit` returns 401.
+      schema:
+        type: string
+        default: view
+        enum:
+        - view
+        - embed
+        - edit
+    After:
+      name: after
+      in: query
+      description: Limit response to posts published after a given ISO 8601 compliant date.
+      schema:
+        type: string
+        format: date-time
+    PathId:
+      name: id
+      in: path
+      required: true
+      description: Unique numeric identifier for the object.
+      schema:
+        type: integer
     PerPage:
       name: per_page
       in: query
@@ -129,51 +218,6 @@ components:
         type: array
         items:
           type: integer
-    Page:
-      name: page
-      in: query
-      description: Current page of the collection (1-based).
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
-    PathId:
-      name: id
-      in: path
-      required: true
-      description: Unique numeric identifier for the object.
-      schema:
-        type: integer
-    Fields:
-      name: _fields
-      in: query
-      description: Comma-separated allow-list of top-level response fields to return.
-      schema:
-        type: string
-    Order:
-      name: order
-      in: query
-      description: Order sort attribute ascending or descending.
-      schema:
-        type: string
-        default: desc
-        enum:
-        - asc
-        - desc
-    After:
-      name: after
-      in: query
-      description: Limit response to posts published after a given ISO 8601 compliant date.
-      schema:
-        type: string
-        format: date-time
-    Before:
-      name: before
-      in: query
-      description: Limit response to posts published before a given ISO 8601 compliant date.
-      schema:
-        type: string
-        format: date-time
     ModifiedAfter:
       name: modified_after
       in: query
@@ -181,100 +225,30 @@ components:
       schema:
         type: string
         format: date-time
-    ModifiedBefore:
-      name: modified_before
-      in: query
-      description: Limit response to posts modified before a given ISO 8601 compliant date.
-      schema:
-        type: string
-        format: date-time
-    Offset:
-      name: offset
-      in: query
-      description: Offset the result set by a specific number of items.
-      schema:
-        type: integer
-    Context:
-      name: context
-      in: query
-      description: Scope under which the request is made; determines fields present in the response. Only `view` and `embed` are available anonymously — `edit` returns 401.
-      schema:
-        type: string
-        default: view
-        enum:
-        - view
-        - embed
-        - edit
-    Embed:
-      name: _embed
-      in: query
-      description: Inline embeddable resources (author, featured media, terms) under `_embedded`.
-      schema:
-        type: string
-    Include:
-      name: include
-      in: query
-      description: Limit result set to specific ids.
-      schema:
-        type: array
-        items:
-          type: integer
-    Search:
-      name: search
-      in: query
-      description: Limit results to those matching a string.
-      schema:
-        type: string
-  responses:
-    InvalidParam:
-      description: One or more query parameters failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            perPageOutOfBounds:
-              summary: per_page above the maximum of 100
-              value:
-                code: rest_invalid_param
-                message: 'Invalid parameter(s): per_page'
-                data:
-                  status: 400
-                  params:
-                    per_page: per_page must be between 1 (inclusive) and 100 (inclusive)
-    InvalidPostId:
-      description: No published object exists with the requested numeric identifier.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            invalidPostId:
-              value:
-                code: rest_post_invalid_id
-                message: Invalid post ID.
-                data:
-                  status: 404
-  headers:
-    XWPTotal:
-      description: Total number of matching items across all pages.
-      schema:
-        type: integer
-    XWPTotalPages:
-      description: Total number of pages available.
-      schema:
-        type: integer
-    LinkPagination:
-      description: RFC 8288 Link header carrying rel="next" and rel="prev".
-      schema:
-        type: string
   schemas:
-    RenderedText:
+    Error:
       type: object
-      description: A WordPress rendered-text container.
+      description: The WordPress REST error envelope. NOT RFC 9457 problem details — no `type` URI and no application/problem+json media type. See errors/flare-therapeutics-problem-types.yml.
       properties:
-        rendered:
+        code:
           type: string
+          description: Machine-readable error code — the stable discriminator.
+        message:
+          type: string
+          description: Human-readable message, localized to the site language.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+            params:
+              type: object
+            details:
+              type: object
+      required:
+      - code
+      - message
+      - data
     Page:
       type: object
       description: A corporate page.
@@ -340,26 +314,52 @@ components:
           type: object
         _links:
           type: object
-    Error:
+    RenderedText:
       type: object
-      description: The WordPress REST error envelope. NOT RFC 9457 problem details — no `type` URI and no application/problem+json media type. See errors/flare-therapeutics-problem-types.yml.
+      description: A WordPress rendered-text container.
       properties:
-        code:
+        rendered:
           type: string
-          description: Machine-readable error code — the stable discriminator.
-        message:
-          type: string
-          description: Human-readable message, localized to the site language.
-        data:
-          type: object
-          properties:
-            status:
-              type: integer
-            params:
-              type: object
-            details:
-              type: object
-      required:
-      - code
-      - message
-      - data
+  headers:
+    XWPTotalPages:
+      description: Total number of pages available.
+      schema:
+        type: integer
+    XWPTotal:
+      description: Total number of matching items across all pages.
+      schema:
+        type: integer
+    LinkPagination:
+      description: RFC 8288 Link header carrying rel="next" and rel="prev".
+      schema:
+        type: string
+  responses:
+    InvalidParam:
+      description: One or more query parameters failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            perPageOutOfBounds:
+              summary: per_page above the maximum of 100
+              value:
+                code: rest_invalid_param
+                message: 'Invalid parameter(s): per_page'
+                data:
+                  status: 400
+                  params:
+                    per_page: per_page must be between 1 (inclusive) and 100 (inclusive)
+    InvalidPostId:
+      description: No published object exists with the requested numeric identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            invalidPostId:
+              value:
+                code: rest_post_invalid_id
+                message: Invalid post ID.
+                data:
+                  status: 404

@@ -3,7 +3,7 @@ info:
   title: Flare Therapeutics Content Oembed API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind www.flaretx.com.
-  description: The read-only content surface Flare Therapeutics exposes at https://www.flaretx.com/wp-json. Flare Therapeutics is a clinical-stage biotechnology company at 400 Technology Square, Cambridge, Massachusetts, developing small-molecule precision medicines against transcription factors — historically "undruggable" targets — using a switch-site discovery platform. Its lead programs are FX-909 in advanced urothelial cancer and FX-111 in prostate cancer, and it runs a discovery collaboration with Roche. It operates no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` route index the site publishes at /wp-json/, restricted to the operations verified to return data anonymously on 2026-08-12. Write operations, `/wp/v2/users`, `/wp/v2/settings`, `/wp/v2/menus`, `/wp/v2/themes`, `/wp/v2/plugins`, `/wp/v2/block-types`, `/wp/v2/font-collections`, `/wp/v2/icons`, the `wp-abilities/v1` namespace, the `aiarc/v1`, `wpe_sign_on_plugin/v1`, `google-site-kit/v1`, `yoast/v1`, `wpgmza/v1`, `akismet/v1`, `post-duplicator/v1`, `mtphrSettings/v1` and `gosmtp-smtp` plugin namespaces and the whole plugin-administration surface all require authentication or are administrative and are deliberately excluded — see x-api-evangelist-provenance.
+  description: The read-only content surface Flare Therapeutics exposes at https://www.flaretx.com/wp-json.
   contact:
     name: Flare Therapeutics
     url: https://www.flaretx.com/
@@ -13,13 +13,13 @@ servers:
 - url: https://www.flaretx.com/wp-json
   description: Production content API
 tags:
-- name: oembed
+- name: o Embed
   description: oEmbed 1.0 provider endpoint for www.flaretx.com URLs.
 paths:
   /oembed/1.0/embed:
     get:
       tags:
-      - oembed
+      - o Embed
       operationId: getOembed
       summary: Get the oEmbed response for a www.flaretx.com URL
       description: oEmbed 1.0 provider endpoint. Returns provider_name "Flare Therapeutics", the resolved title, author, thumbnail and an iframe embed for any URL on this site.

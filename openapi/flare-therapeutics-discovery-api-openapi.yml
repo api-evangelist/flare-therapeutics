@@ -3,7 +3,7 @@ info:
   title: Flare Therapeutics Content Discovery API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind www.flaretx.com.
-  description: The read-only content surface Flare Therapeutics exposes at https://www.flaretx.com/wp-json. Flare Therapeutics is a clinical-stage biotechnology company at 400 Technology Square, Cambridge, Massachusetts, developing small-molecule precision medicines against transcription factors — historically "undruggable" targets — using a switch-site discovery platform. Its lead programs are FX-909 in advanced urothelial cancer and FX-111 in prostate cancer, and it runs a discovery collaboration with Roche. It operates no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` route index the site publishes at /wp-json/, restricted to the operations verified to return data anonymously on 2026-08-12. Write operations, `/wp/v2/users`, `/wp/v2/settings`, `/wp/v2/menus`, `/wp/v2/themes`, `/wp/v2/plugins`, `/wp/v2/block-types`, `/wp/v2/font-collections`, `/wp/v2/icons`, the `wp-abilities/v1` namespace, the `aiarc/v1`, `wpe_sign_on_plugin/v1`, `google-site-kit/v1`, `yoast/v1`, `wpgmza/v1`, `akismet/v1`, `post-duplicator/v1`, `mtphrSettings/v1` and `gosmtp-smtp` plugin namespaces and the whole plugin-administration surface all require authentication or are administrative and are deliberately excluded — see x-api-evangelist-provenance.
+  description: The read-only content surface Flare Therapeutics exposes at https://www.flaretx.com/wp-json.
   contact:
     name: Flare Therapeutics
     url: https://www.flaretx.com/
@@ -13,13 +13,13 @@ servers:
 - url: https://www.flaretx.com/wp-json
   description: Production content API
 tags:
-- name: discovery
+- name: Discovery
   description: Route, type, taxonomy and status discovery documents.
 paths:
   /:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: getApiIndex
       summary: Get the REST API index
       description: The root discovery document. Returns the site name, description, URL, the registered namespaces, the full route table with per-endpoint `args`, and the `authentication` block. This is the only machine-readable contract Flare Therapeutics publishes.
@@ -58,7 +58,7 @@ paths:
   /wp/v2:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: getNamespaceIndex
       summary: Get the wp/v2 namespace index
       description: The route table scoped to the wp/v2 namespace (106 routes at harvest time).
@@ -81,7 +81,7 @@ paths:
   /wp/v2/types:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: listPostTypes
       summary: List registered post types
       description: Eleven post types are registered at harvest time — post, page, attachment, nav_menu_item, wp_block, wp_template, wp_template_part, wp_global_styles, wp_navigation, wp_font_family and wp_font_face. No company-specific custom post type is exposed over REST.
@@ -99,7 +99,7 @@ paths:
   /wp/v2/types/{type}:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: getPostType
       summary: Get one registered post type
       parameters:
@@ -122,7 +122,7 @@ paths:
   /wp/v2/taxonomies:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: listTaxonomies
       summary: List registered taxonomies
       description: Four taxonomies registered at harvest time — category, post_tag (also attached to an unexposed `team_member` post type), nav_menu and wp_pattern_category.
@@ -145,7 +145,7 @@ paths:
   /wp/v2/taxonomies/{taxonomy}:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: getTaxonomy
       summary: Get one registered taxonomy
       parameters:
@@ -167,7 +167,7 @@ paths:
   /wp/v2/statuses:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: listStatuses
       summary: List registered post statuses
       description: Anonymously only the public `publish` status is returned.
@@ -185,7 +185,7 @@ paths:
   /wp/v2/statuses/{status}:
     get:
       tags:
-      - discovery
+      - Discovery
       operationId: getStatus
       summary: Get one registered post status
       parameters:
@@ -206,21 +206,6 @@ paths:
           $ref: '#/components/responses/NoRoute'
 components:
   schemas:
-    Status:
-      type: object
-      properties:
-        slug:
-          type: string
-        name:
-          type: string
-        public:
-          type: boolean
-        queryable:
-          type: boolean
-        date_floating:
-          type: boolean
-        _links:
-          type: object
     Taxonomy:
       type: object
       properties:
@@ -242,29 +227,19 @@ components:
             type: string
         _links:
           type: object
-    PostType:
+    Status:
       type: object
       properties:
         slug:
           type: string
         name:
           type: string
-        description:
-          type: string
-        hierarchical:
+        public:
           type: boolean
-        has_archive:
+        queryable:
           type: boolean
-        rest_base:
-          type: string
-        rest_namespace:
-          type: string
-        icon:
-          type: string
-        taxonomies:
-          type: array
-          items:
-            type: string
+        date_floating:
+          type: boolean
         _links:
           type: object
     Error:
@@ -290,18 +265,31 @@ components:
       - code
       - message
       - data
-  parameters:
-    Context:
-      name: context
-      in: query
-      description: Scope under which the request is made; determines fields present in the response. Only `view` and `embed` are available anonymously — `edit` returns 401.
-      schema:
-        type: string
-        default: view
-        enum:
-        - view
-        - embed
-        - edit
+    PostType:
+      type: object
+      properties:
+        slug:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        hierarchical:
+          type: boolean
+        has_archive:
+          type: boolean
+        rest_base:
+          type: string
+        rest_namespace:
+          type: string
+        icon:
+          type: string
+        taxonomies:
+          type: array
+          items:
+            type: string
+        _links:
+          type: object
   responses:
     NoRoute:
       description: No route was found matching the URL and request method.
@@ -316,3 +304,15 @@ components:
                 message: No route was found matching the URL and request method.
                 data:
                   status: 404
+  parameters:
+    Context:
+      name: context
+      in: query
+      description: Scope under which the request is made; determines fields present in the response. Only `view` and `embed` are available anonymously — `edit` returns 401.
+      schema:
+        type: string
+        default: view
+        enum:
+        - view
+        - embed
+        - edit

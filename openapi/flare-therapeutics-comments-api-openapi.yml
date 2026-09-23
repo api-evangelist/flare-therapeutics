@@ -3,7 +3,7 @@ info:
   title: Flare Therapeutics Content Comments API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind www.flaretx.com.
-  description: The read-only content surface Flare Therapeutics exposes at https://www.flaretx.com/wp-json. Flare Therapeutics is a clinical-stage biotechnology company at 400 Technology Square, Cambridge, Massachusetts, developing small-molecule precision medicines against transcription factors — historically "undruggable" targets — using a switch-site discovery platform. Its lead programs are FX-909 in advanced urothelial cancer and FX-111 in prostate cancer, and it runs a discovery collaboration with Roche. It operates no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` route index the site publishes at /wp-json/, restricted to the operations verified to return data anonymously on 2026-08-12. Write operations, `/wp/v2/users`, `/wp/v2/settings`, `/wp/v2/menus`, `/wp/v2/themes`, `/wp/v2/plugins`, `/wp/v2/block-types`, `/wp/v2/font-collections`, `/wp/v2/icons`, the `wp-abilities/v1` namespace, the `aiarc/v1`, `wpe_sign_on_plugin/v1`, `google-site-kit/v1`, `yoast/v1`, `wpgmza/v1`, `akismet/v1`, `post-duplicator/v1`, `mtphrSettings/v1` and `gosmtp-smtp` plugin namespaces and the whole plugin-administration surface all require authentication or are administrative and are deliberately excluded — see x-api-evangelist-provenance.
+  description: The read-only content surface Flare Therapeutics exposes at https://www.flaretx.com/wp-json.
   contact:
     name: Flare Therapeutics
     url: https://www.flaretx.com/
@@ -13,13 +13,13 @@ servers:
 - url: https://www.flaretx.com/wp-json
   description: Production content API
 tags:
-- name: comments
+- name: Comments
   description: Comment collection. Registered and reachable, but empty — no post on this deployment carries comments.
 paths:
   /wp/v2/comments:
     get:
       tags:
-      - comments
+      - Comments
       operationId: listComments
       summary: List comments
       description: Registered and reachable but empty on this deployment (X-WP-Total 0 at harvest time).
@@ -69,7 +69,7 @@ paths:
   /wp/v2/comments/{id}:
     get:
       tags:
-      - comments
+      - Comments
       operationId: getComment
       summary: Get one comment
       parameters:
@@ -85,15 +85,6 @@ paths:
         '404':
           $ref: '#/components/responses/InvalidCommentId'
 components:
-  headers:
-    XWPTotal:
-      description: Total number of matching items across all pages.
-      schema:
-        type: integer
-    XWPTotalPages:
-      description: Total number of pages available.
-      schema:
-        type: integer
   parameters:
     Order:
       name: order
@@ -105,10 +96,44 @@ components:
         enum:
         - asc
         - desc
+    PathId:
+      name: id
+      in: path
+      required: true
+      description: Unique numeric identifier for the object.
+      schema:
+        type: integer
     After:
       name: after
       in: query
       description: Limit response to posts published after a given ISO 8601 compliant date.
+      schema:
+        type: string
+        format: date-time
+    Page:
+      name: page
+      in: query
+      description: Current page of the collection (1-based).
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+    Search:
+      name: search
+      in: query
+      description: Limit results to those matching a string.
+      schema:
+        type: string
+    Fields:
+      name: _fields
+      in: query
+      description: Comma-separated allow-list of top-level response fields to return.
+      schema:
+        type: string
+    Before:
+      name: before
+      in: query
+      description: Limit response to posts published before a given ISO 8601 compliant date.
       schema:
         type: string
         format: date-time
@@ -121,13 +146,6 @@ components:
         default: 10
         minimum: 1
         maximum: 100
-    Before:
-      name: before
-      in: query
-      description: Limit response to posts published before a given ISO 8601 compliant date.
-      schema:
-        type: string
-        format: date-time
     Context:
       name: context
       in: query
@@ -139,63 +157,30 @@ components:
         - view
         - embed
         - edit
-    Search:
-      name: search
-      in: query
-      description: Limit results to those matching a string.
-      schema:
-        type: string
-    Page:
-      name: page
-      in: query
-      description: Current page of the collection (1-based).
+  headers:
+    XWPTotal:
+      description: Total number of matching items across all pages.
       schema:
         type: integer
-        default: 1
-        minimum: 1
-    PathId:
-      name: id
-      in: path
-      required: true
-      description: Unique numeric identifier for the object.
+    XWPTotalPages:
+      description: Total number of pages available.
       schema:
         type: integer
-    Fields:
-      name: _fields
-      in: query
-      description: Comma-separated allow-list of top-level response fields to return.
-      schema:
-        type: string
+  responses:
+    InvalidCommentId:
+      description: No comment exists with the requested numeric identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            invalidCommentId:
+              value:
+                code: rest_comment_invalid_id
+                message: Invalid comment ID.
+                data:
+                  status: 404
   schemas:
-    RenderedText:
-      type: object
-      description: A WordPress rendered-text container.
-      properties:
-        rendered:
-          type: string
-    Error:
-      type: object
-      description: The WordPress REST error envelope. NOT RFC 9457 problem details — no `type` URI and no application/problem+json media type. See errors/flare-therapeutics-problem-types.yml.
-      properties:
-        code:
-          type: string
-          description: Machine-readable error code — the stable discriminator.
-        message:
-          type: string
-          description: Human-readable message, localized to the site language.
-        data:
-          type: object
-          properties:
-            status:
-              type: integer
-            params:
-              type: object
-            details:
-              type: object
-      required:
-      - code
-      - message
-      - data
     Comment:
       type: object
       description: A comment. The collection is empty on this deployment.
@@ -229,17 +214,32 @@ components:
           type: string
         _links:
           type: object
-  responses:
-    InvalidCommentId:
-      description: No comment exists with the requested numeric identifier.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            invalidCommentId:
-              value:
-                code: rest_comment_invalid_id
-                message: Invalid comment ID.
-                data:
-                  status: 404
+    Error:
+      type: object
+      description: The WordPress REST error envelope. NOT RFC 9457 problem details — no `type` URI and no application/problem+json media type. See errors/flare-therapeutics-problem-types.yml.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code — the stable discriminator.
+        message:
+          type: string
+          description: Human-readable message, localized to the site language.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+            params:
+              type: object
+            details:
+              type: object
+      required:
+      - code
+      - message
+      - data
+    RenderedText:
+      type: object
+      description: A WordPress rendered-text container.
+      properties:
+        rendered:
+          type: string

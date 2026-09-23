@@ -1,0 +1,39 @@
+{
+  "provider": "flare-therapeutics",
+  "sources": [
+    "_original/flare-therapeutics-content-openapi.yml"
+  ],
+  "outputs": [
+    "flare-therapeutics-comments-api-openapi.yml",
+    "flare-therapeutics-discovery-api-openapi.yml",
+    "flare-therapeutics-media-api-openapi.yml",
+    "flare-therapeutics-oembed-api-openapi.yml",
+    "flare-therapeutics-pages-api-openapi.yml",
+    "flare-therapeutics-patterns-api-openapi.yml",
+    "flare-therapeutics-posts-api-openapi.yml",
+    "flare-therapeutics-search-api-openapi.yml",
+    "flare-therapeutics-taxonomy-api-openapi.yml"
+  ],
+  "archived": [
+    "deleted 1 superseded output(s) from the previous generation"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "flare-therapeutics-content-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "superseded outputs removed: flare-therapeutics-o-embed-api-openapi.yml",
+    "apis.yml register: written (+1 apis, 9 total)"
+  ],
+  "skipped": [
+    "flare-therapeutics-comments-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flare-therapeutics-discovery-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flare-therapeutics-media-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flare-therapeutics-o-embed-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flare-therapeutics-pages-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flare-therapeutics-patterns-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flare-therapeutics-posts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flare-therapeutics-search-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flare-therapeutics-taxonomy-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

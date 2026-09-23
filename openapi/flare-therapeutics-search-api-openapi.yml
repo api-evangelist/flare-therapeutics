@@ -3,7 +3,7 @@ info:
   title: Flare Therapeutics Content Search API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind www.flaretx.com.
-  description: The read-only content surface Flare Therapeutics exposes at https://www.flaretx.com/wp-json. Flare Therapeutics is a clinical-stage biotechnology company at 400 Technology Square, Cambridge, Massachusetts, developing small-molecule precision medicines against transcription factors — historically "undruggable" targets — using a switch-site discovery platform. Its lead programs are FX-909 in advanced urothelial cancer and FX-111 in prostate cancer, and it runs a discovery collaboration with Roche. It operates no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` route index the site publishes at /wp-json/, restricted to the operations verified to return data anonymously on 2026-08-12. Write operations, `/wp/v2/users`, `/wp/v2/settings`, `/wp/v2/menus`, `/wp/v2/themes`, `/wp/v2/plugins`, `/wp/v2/block-types`, `/wp/v2/font-collections`, `/wp/v2/icons`, the `wp-abilities/v1` namespace, the `aiarc/v1`, `wpe_sign_on_plugin/v1`, `google-site-kit/v1`, `yoast/v1`, `wpgmza/v1`, `akismet/v1`, `post-duplicator/v1`, `mtphrSettings/v1` and `gosmtp-smtp` plugin namespaces and the whole plugin-administration surface all require authentication or are administrative and are deliberately excluded — see x-api-evangelist-provenance.
+  description: The read-only content surface Flare Therapeutics exposes at https://www.flaretx.com/wp-json.
   contact:
     name: Flare Therapeutics
     url: https://www.flaretx.com/
@@ -13,13 +13,13 @@ servers:
 - url: https://www.flaretx.com/wp-json
   description: Production content API
 tags:
-- name: search
+- name: Search
   description: Cross-content search across published objects.
 paths:
   /wp/v2/search:
     get:
       tags:
-      - search
+      - Search
       operationId: searchContent
       summary: Search across all published content
       description: Cross-content search returning lightweight pointers (id, title, url, type, subtype) that must be resolved back to the full object. A search for "flare" returned 49 hits at harvest time.
@@ -77,20 +77,42 @@ paths:
         '400':
           $ref: '#/components/responses/InvalidParam'
 components:
-  headers:
-    XWPTotalPages:
-      description: Total number of pages available.
-      schema:
-        type: integer
-    XWPTotal:
-      description: Total number of matching items across all pages.
-      schema:
-        type: integer
+  responses:
+    InvalidParam:
+      description: One or more query parameters failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            perPageOutOfBounds:
+              summary: per_page above the maximum of 100
+              value:
+                code: rest_invalid_param
+                message: 'Invalid parameter(s): per_page'
+                data:
+                  status: 400
+                  params:
+                    per_page: per_page must be between 1 (inclusive) and 100 (inclusive)
   parameters:
     Embed:
       name: _embed
       in: query
       description: Inline embeddable resources (author, featured media, terms) under `_embedded`.
+      schema:
+        type: string
+    Page:
+      name: page
+      in: query
+      description: Current page of the collection (1-based).
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+    Search:
+      name: search
+      in: query
+      description: Limit results to those matching a string.
       schema:
         type: string
     PerPage:
@@ -113,21 +135,24 @@ components:
         - view
         - embed
         - edit
-    Search:
-      name: search
-      in: query
-      description: Limit results to those matching a string.
-      schema:
-        type: string
-    Page:
-      name: page
-      in: query
-      description: Current page of the collection (1-based).
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
   schemas:
+    SearchResult:
+      type: object
+      description: A lightweight pointer returned by cross-content search. Not a stored entity — resolve it back to a Post, Page or MediaItem using id + subtype.
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        url:
+          type: string
+          format: uri
+        type:
+          type: string
+        subtype:
+          type: string
+        _links:
+          type: object
     Error:
       type: object
       description: The WordPress REST error envelope. NOT RFC 9457 problem details — no `type` URI and no application/problem+json media type. See errors/flare-therapeutics-problem-types.yml.
@@ -151,37 +176,12 @@ components:
       - code
       - message
       - data
-    SearchResult:
-      type: object
-      description: A lightweight pointer returned by cross-content search. Not a stored entity — resolve it back to a Post, Page or MediaItem using id + subtype.
-      properties:
-        id:
-          type: integer
-        title:
-          type: string
-        url:
-          type: string
-          format: uri
-        type:
-          type: string
-        subtype:
-          type: string
-        _links:
-          type: object
-  responses:
-    InvalidParam:
-      description: One or more query parameters failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            perPageOutOfBounds:
-              summary: per_page above the maximum of 100
-              value:
-                code: rest_invalid_param
-                message: 'Invalid parameter(s): per_page'
-                data:
-                  status: 400
-                  params:
-                    per_page: per_page must be between 1 (inclusive) and 100 (inclusive)
+  headers:
+    XWPTotal:
+      description: Total number of matching items across all pages.
+      schema:
+        type: integer
+    XWPTotalPages:
+      description: Total number of pages available.
+      schema:
+        type: integer
