@@ -64,5 +64,111 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Flare Therapeutics is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://forgeglobal.com/flare-therapeutics_stock/
+Flare Therapeutics is a clinical-stage biotechnology company headquartered at 400 Technology Square, Cambridge, Massachusetts, developing small-molecule precision medicines against transcription factors — a target class long considered undruggable. Its platform combines a "switch site" hypothesis with cell-based ligand discovery and chemoproteomics to find binding pockets on transcription factors that control cancer cell states. The company launched publicly in May 2021 with an $82 million Series A led by Third Rock Ventures, and closed an $85 million insider-led Series C on 30 June 2026 led by Third Rock Ventures and Nextech Invest with Pfizer Ventures, Boxer Capital, GordonMD Global Investments, Invus, Casdin Capital, Eli Lilly, Novartis, Agent Capital and Eventide Asset Management participating, appointing Anna Protopapas as Chief Executive Officer at the same time. Its clinical-stage lead FX-909 is a PPARG inverse agonist in advanced urothelial cancer; FX-111 is an androgen-receptor-directed program in prostate cancer that received FDA IND clearance ahead of a clinical start in the third quarter of 2026. Flare also runs a discovery collaboration with Roche on undrugged transcription factor targets in oncology. Flare Therapeutics operates no developer program and publishes no product API, developer portal or API documentation. The only machine-readable surface reachable without credentials is the WordPress REST content API behind www.flaretx.com, catalogued here.
+
+**Areas:** Company · Biotechnology · Pharmaceuticals · Oncology · Precision Medicine · transcription-factors · Drug Discovery · Clinical Trials · Life Sciences · content-api
+
+## Flare Therapeutics on APIs.io
+
+Everything profiled for Flare Therapeutics is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/flare-therapeutics/](https://apis.io/providers/flare-therapeutics/)** — or go straight to one of the APIs or properties below.
+
+### APIs (1)
+
+- [Flare Therapeutics Website (WordPress REST)](https://apis.io/apis/flare-therapeutics/flaretx-com-website-wordpress-rest/) — The public WordPress REST API (wp-json) of the Flare Therapeutics website at www.flaretx.com: the route index of the site's content management system,…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### Collections (1)
+
+Postman and Open Collection request collections.
+
+- [Moved to /providers/flare-therapeutics/](https://apis.io/collections/flare-therapeutics/open-flare-therapeutics-content/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Flare Therapeutics Content Overlay](https://apis.io/overlays/flare-therapeutics/flare-therapeutics-content-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Flare Therapeutics Authentication](https://apis.io/security/flare-therapeutics/flare-therapeutics-authentication/)
+- [Flare Therapeutics Domain Security](https://apis.io/security/flare-therapeutics/flare-therapeutics-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Flare Therapeutics Plans Pricing](https://apis.io/plans/flare-therapeutics/flare-therapeutics-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Flare Therapeutics Rate Limits](https://apis.io/rate-limits/flare-therapeutics/flare-therapeutics-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.flaretx.com/)
+- [Terms of service](https://www.flaretx.com/terms-of-use/)
+- [Privacy policy](https://www.flaretx.com/privacy-policy/)
+- [GitHub](https://github.com/FlareTx)
+
+## API Evangelist rating
+
+**Kin Score 17.4** — emerging · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 65.2 |
+| Contract quality | 0.0 |
+| Contract governance | 4.5 |
+| Operational transparency | 2.6 |
+| Developer ergonomics | 23.2 |
+| Access clarity | 21.1 |
+
+**Agent readiness 6.7** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 19.5** — Health
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/flare-therapeutics/](https://apis.io/providers/flare-therapeutics/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Flare Therapeutics: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/flare-therapeutics/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
